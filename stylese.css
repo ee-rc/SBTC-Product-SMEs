@@ -1,0 +1,113 @@
+/* ตั้งค่าพื้นฐาน */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f9;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
+/* ส่วนหัว */
+header {
+    background-color: #333;
+    color: white;
+    padding: 20px;
+    font-size: 24px;
+    font-weight: bold;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* โครงร่างสินค้า */
+.product-management {
+    width: 80%;
+    margin: auto;
+    padding: 20px;
+}
+
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+/* กล่องสินค้า */
+.product-card {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    text-align: center;
+    transition: transform 0.2s ease-in-out;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+}
+
+/* รูปภาพสินค้า */
+.product-card img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    border-radius: 5px;
+}
+
+/* ข้อความ */
+h2 {
+    font-size: 20px;
+    color: #333;
+}
+
+.desc {
+    font-size: 14px;
+    color: #666;
+}
+
+.price {
+    font-size: 18px;
+    font-weight: bold;
+    color: #007bff;
+}
+
+.stock {
+    font-size: 14px;
+    color: #28a745;
+}
+
+/* ปุ่ม */
+.btn {
+    display: inline-block;
+    padding: 10px 15px;
+    margin: 5px;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    color: white;
+    background: #007bff;
+    transition: background 0.3s;
+}
+
+.btn:hover {
+    background: #0056b3;
+}
+
+.btn.red {
+    background: #dc3545;
+}
+
+.btn.red:hover {
+    background: #c82333;
+}
+
+.btn.blue {
+    background: #28a745;
+}
+
+.btn.blue:hover {
+    background: #218838;
+}
+
+/* ปุ่มเพิ่มสินค้า */
+.add-product {
+    margin-top: 20px;
+}

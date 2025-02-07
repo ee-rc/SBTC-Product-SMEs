@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <title>ตะกร้าสินค้า</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+ <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+    
+        /* สไตล์ปุ่มสามขีด */
+        .menu-button {
+            font-size: 30px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 15px;
+            position: absolute;
+            top: 10px;
+            left: 10px;
+        }
+    
+        /* แถบเมนู */
+        .menu {
+            position: fixed;
+            top: 0;
+            left: -250px; /* ซ่อนเมนูไว้ก่อน */
+            width: 250px;
+            height: 100%;
+            background: #333;
+            padding-top: 60px;
+            transition: 0.3s;
+        }
+    
+        /* ปุ่มปิดเมนู */
+        .close-button {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 30px;
+            color: white;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+    
+        /* ลิงก์ในเมนู */
+        .menu a {
+            display: block;
+            padding: 15px;
+            text-decoration: none;
+            color: white;
+            font-size: 18px;
+            text-align: center;
+        }
+    
+        .menu a:hover {
+            background: #575757;
+        }
+    </style>
+    <script>
+        function openMenu() {
+            document.getElementById("menu").style.left = "0";
+        }
+    
+        function closeMenu() {
+            document.getElementById("menu").style.left = "-250px";
+        }
+    </script>
+<body>
+  
+    <header class="main-header">
+        <div class="header-content">
+            <h2>ตะกร้าสินค้า</h2>
+        </div>
+        <!-- ปุ่มสามขีด -->
+    <button class="menu-button" onclick="openMenu()">☰</button>
+        <!-- เมนู -->
+<div class="menu" id="menu">
+  <button class="close-button" onclick="closeMenu()">×</button>
+  <a href="products.html">กลับหน้าสินค่า</a>
+
+</div>
+    </header>
+    <div id="cartItems"></div>
+    <button onclick="clearCart()">ล้างตะกร้า</button>
+    <button onclick="checkout()">สั่งซื้อ</button>
+
+    <script src="cart.js"></script>
+    <script>
+        function loadCart() {
+            let cart = JSON.parse(localStorage.getItem("cart")) || [];
+            let cartHTML = "";
+            cart.forEach((item, index) => {
+                cartHTML += `<div>
+                    <img src="${item.image}" width="50">
+                    <b>${item.name}</b> - ${item.price} บาท
+                    <button onclick="removeFromCart(${index})">ลบ</button>
+                </div>`;
+            });
+            document.getElementById("cartItems").innerHTML = cartHTML;
+        }
+
+        function removeFromCart(index) {
+            let cart = JSON.parse(localStorage.getItem("cart")) || [];
+            cart.splice(index, 1);
+            localStorage.setItem("cart", JSON.stringify(cart));
+            loadCart();
+        }
+
+        function clearCart() {
+            localStorage.removeItem("cart");
+            loadCart();
+        }
+
+        function checkout() {
+            let cart = JSON.parse(localStorage.getItem("cart")) || [];
+            if (cart.length === 0) {
+                alert("ตะกร้าว่างเปล่า!");
+                return;
+            }
+            let orderText = cart.map(item => `${item.name} - ${item.price} บาท`).join("\n");
+            localStorage.setItem("order", orderText);
+            window.location.href = "chat.html"; // ไปที่หน้าแชท
+        }
+
+        document.addEventListener("DOMContentLoaded", loadCart);
+    </script>
+</body>
+</html>

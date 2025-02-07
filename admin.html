@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <title>จัดการแอดมิน</title>
+    <script type="module">
+        import { getAuth } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
+        import { getFirestore, collection, getDocs, updateDoc, doc } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
+
+        const auth = getAuth();
+        const db = getFirestore();
+
+        async function loadPendingAdmins() {
+            const adminsCollection = collection(db, "admins");
+            const adminSnapshot = await getDocs(adminsCollection);
+            const adminList = document.getElementById("adminList");
+
+            adminSnapshot.forEach((adminDoc) => {
+                const adminData = adminDoc.data();
+                if (adminData.role === "admin" && !adminData.approved) {
+                    const listItem = document.createElement("li");
+                    listItem.textContent = adminDoc.id;
+
+                    const approveButton = document.createElement("button");
+                    approveButton.textContent = "อนุมัติ";
+                    approveButton.onclick = async () => {
+                        await updateDoc(doc(db, "admins", adminDoc.id), { approved: true });
+                        alert("อนุมัติแอดมินเรียบร้อย");
+                        listItem.remove();
+                    };
+
+                    listItem.appendChild(approveButton);
+                    adminList.appendChild(listItem);
+                }
+            });
+        }
+
+        loadPendingAdmins();
+    </script>
+</head>
+<body>
+    <h2>รายการแอดมินที่รออนุมัติ</h2>
+    <ul id="js/adminList"></ul>
+</body>
+</html>

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>แชทร้านค้า</title>
+    <link rel="stylesheet" href="chat.css">
+</head>
+     <style>body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* สไตล์ปุ่มสามขีด */
+    .menu-button {
+      font-size: 30px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 15px;
+      position: absolute;
+      top: 10px;
+      left: 10px;
+    }
+
+    /* แถบเมนู */
+    .menu {
+      position: fixed;
+      top: 0;
+      left: -250px;
+      /* ซ่อนเมนูไว้ก่อน */
+      width: 250px;
+      height: 100%;
+      background: #333;
+      padding-top: 60px;
+      transition: 0.3s;
+    }
+
+    /* ปุ่มปิดเมนู */
+    .close-button {
+      position: absolute;
+      top: 10px;
+      right: 20px;
+      font-size: 30px;
+      color: white;
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+
+    /* ลิงก์ในเมนู */
+    .menu a {
+      display: block;
+      padding: 15px;
+      text-decoration: none;
+      color: white;
+      font-size: 18px;
+      text-align: center;
+    }
+
+    .menu a:hover {
+      background: #575757;
+    }
+
+    </style><script>function openMenu() {
+      document.getElementById("menu").style.left="0";
+    }
+
+    function closeMenu() {
+      document.getElementById("menu").style.left="-250px";
+    }
+
+    </script>
+      <!-- ปุ่มสามขีด -->
+    <button class="menu-button" onclick="openMenu()">☰</button>
+    
+    <!-- เมนู -->
+    <div class="menu" id="menu">
+        <button class="close-button" onclick="closeMenu()">×</button>
+        <a href="products.html">กลับหน้าสินค่า</a>
+      
+    </div>
+<body>
+
+    <div class="chat-container">
+        <div class="chat-header">
+            <h2>แชทร้านค้า</h2>
+        </div>
+        <div class="chat-box" id="chatBox">
+            <!-- ข้อความแชทจะแสดงที่นี่ -->
+        </div>
+        <div class="chat-input">
+            <input type="text" id="messageInput" placeholder="พิมพ์ข้อความ...">
+            <button onclick="sendMessage()">ส่ง</button>
+        </div>
+    </div>
+
+    <script type="module" src="js/chat.js"></script>
+</body>
+</html>
