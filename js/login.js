@@ -33,29 +33,3 @@ document.getElementById("login-form").addEventListener("submit", async (e) => {
   }
 });
 
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
-import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
-
-const auth = getAuth();
-const db = getFirestore();
-
-onAuthStateChanged(auth, async (user) => {
-    if (user) {
-        const userDoc = await getDoc(doc(db, "admins", user.email));
-
-        if (userDoc.exists()) {
-            const userData = userDoc.data();
-
-            if (userData.role === "main-admin" || (userData.role === "admin" && userData.approved)) {
-                console.log("เข้าสู่ระบบแอดมิน");
-                window.location.href = "admin.html";  // ไปหน้าจัดการแอดมิน
-            } else {
-                alert("คุณไม่ได้รับสิทธิ์เป็นแอดมิน");
-                auth.signOut();
-            }
-        } else {
-            alert("คุณไม่ได้รับสิทธิ์เป็นแอดมิน");
-            auth.signOut();
-        }
-    }
-});
