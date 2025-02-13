@@ -171,7 +171,7 @@
                 alert("ตะกร้าว่างเปล่า!");
                 return;
             }
-            let orderText = cart.map(item => ${item.name} - ${item.price} บาท).join("\n");
+            let orderText = cart.map(item => `${item.name} - ${item.price} บาท`).join("\n");
             localStorage.setItem("order", orderText);
             window.location.href = "order.html";
         }
