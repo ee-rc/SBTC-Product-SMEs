@@ -4,38 +4,69 @@
     <meta charset="UTF-8">
     <title>ตะกร้าสินค้า</title>
     <link rel="stylesheet" href="styles.css">
-</head>
- <style>
+    <style>
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
+            background-color: #f4f4f4;
         }
-    
-        /* สไตล์ปุ่มสามขีด */
+
+        /* ส่วนหัว */
+        .main-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #333;
+            color: white;
+            padding: 15px;
+            font-size: 24px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        /* ปุ่มสามขีด */
         .menu-button {
             font-size: 30px;
             background: none;
             border: none;
             cursor: pointer;
-            padding: 15px;
             position: absolute;
-            top: 10px;
-            left: 10px;
+            left: 15px;
+            color: white;
         }
-    
-        /* แถบเมนู */
+
+        /* เมนูด้านข้าง */
         .menu {
             position: fixed;
             top: 0;
-            left: -250px; /* ซ่อนเมนูไว้ก่อน */
+            left: -250px;
             width: 250px;
             height: 100%;
-            background: #333;
+            background: #222;
             padding-top: 60px;
-            transition: 0.3s;
+            transition: 0.3s ease-in-out;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5);
         }
-    
+
+        .menu a {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            text-decoration: none;
+            color: white;
+            font-size: 18px;
+            border-bottom: 1px solid #444;
+        }
+
+        .menu a:hover {
+            background: #575757;
+        }
+
+        .menu a i {
+            margin-right: 10px;
+        }
+
         /* ปุ่มปิดเมนู */
         .close-button {
             position: absolute;
@@ -47,51 +78,68 @@
             border: none;
             cursor: pointer;
         }
-    
-        /* ลิงก์ในเมนู */
-        .menu a {
-            display: block;
-            padding: 15px;
-            text-decoration: none;
-            color: white;
-            font-size: 18px;
-            text-align: center;
+
+        /* ตะกร้าสินค้า */
+        #cartItems {
+            max-width: 600px;
+            margin: 20px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
         }
-    
-        .menu a:hover {
-            background: #575757;
+
+        #cartItems div {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        #cartItems img {
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+
+        /* ปุ่ม */
+        .button {
+            background: #0275d8;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-top: 10px;
+            font-size: 16px;
+        }
+
+        .button:hover {
+            background: #025aa5;
+        }
+
+        .button.delete {
+            background: red;
+        }
+
+        .button.delete:hover {
+            background: darkred;
+        }
+
+        .cart-buttons {
+            text-align: center;
+            margin-top: 20px;
         }
     </style>
     <script>
         function openMenu() {
             document.getElementById("menu").style.left = "0";
         }
-    
+
         function closeMenu() {
             document.getElementById("menu").style.left = "-250px";
         }
-    </script>
-<body>
-  
-    <header class="main-header">
-        <div class="header-content">
-            <h2>ตะกร้าสินค้า</h2>
-        </div>
-        <!-- ปุ่มสามขีด -->
-    <button class="menu-button" onclick="openMenu()">☰</button>
-        <!-- เมนู -->
-<div class="menu" id="menu">
-  <button class="close-button" onclick="closeMenu()">×</button>
-  <a href="products.html">กลับหน้าสินค่า</a>
 
-</div>
-    </header>
-    <div id="cartItems"></div>
-    <button onclick="clearCart()">ล้างตะกร้า</button>
-    <button onclick="checkout()">สั่งซื้อ</button>
-
-    <script src="cart.js"></script>
-    <script>
         function loadCart() {
             let cart = JSON.parse(localStorage.getItem("cart")) || [];
             let cartHTML = "";
@@ -99,7 +147,7 @@
                 cartHTML += `<div>
                     <img src="${item.image}" width="50">
                     <b>${item.name}</b> - ${item.price} บาท
-                    <button onclick="removeFromCart(${index})">ลบ</button>
+                    <button class="button delete" onclick="removeFromCart(${index})">ลบ</button>
                 </div>`;
             });
             document.getElementById("cartItems").innerHTML = cartHTML;
@@ -123,12 +171,36 @@
                 alert("ตะกร้าว่างเปล่า!");
                 return;
             }
-            let orderText = cart.map(item => `${item.name} - ${item.price} บาท`).join("\n");
+            let orderText = cart.map(item => ${item.name} - ${item.price} บาท).join("\n");
             localStorage.setItem("order", orderText);
-            window.location.href = "chat.html"; // ไปที่หน้าแชท
+            window.location.href = "order.html";
         }
 
         document.addEventListener("DOMContentLoaded", loadCart);
     </script>
+</head>
+<body>
+
+<header class="main-header">
+    <!-- ปุ่มสามขีด -->
+    <button class="menu-button" onclick="openMenu()">☰</button>
+    <h2>ตะกร้าสินค้า</h2>
+</header>
+
+<!-- เมนู -->
+<div class="menu" id="menu">
+    <button class="close-button" onclick="closeMenu()">×</button>
+    <a href="products.html"><i>🏠</i> กลับหน้าสินค้า</a>
+</div>
+
+<!-- ตะกร้าสินค้า -->
+<div id="cartItems"></div>
+
+<!-- ปุ่มต่างๆ -->
+<div class="cart-buttons">
+    <button class="button" onclick="clearCart()">ล้างตะกร้า</button>
+    <button class="button" onclick="checkout()">สั่งซื้อ</button>
+</div>
+
 </body>
 </html>
