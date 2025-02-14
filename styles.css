@@ -362,6 +362,7 @@ h1 {
     background-color: #218838;
 }
 
+
 /* กลาง */
 .center {
   text-align: center;
@@ -483,3 +484,107 @@ h1 {
     height: auto;
     border-radius: 5px;
 }
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f8f8f8;
+}
+
+/* ปุ่มเมนู */
+.menu-button {
+    font-size: 30px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 15px;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+}
+
+/* เมนูด้านข้าง */
+.menu {
+    position: fixed;
+    top: 0;
+    left: -250px;
+    width: 250px;
+    height: 100%;
+    padding-top: 60px;
+    transition: 0.3s;
+}
+
+.close-button {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 30px;
+    color: white;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.menu a {
+    display: block;
+    padding: 15px;
+    text-decoration: none;
+    color: white;
+    font-size: 18px;
+    text-align: center;
+}
+
+.menu a:hover {
+    background: #575757;
+}
+
+/* รายการสินค้า */
+.product-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    padding: 20px;
+}
+
+.product-card {
+    background: white;
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 250px;
+}
+
+.product-card img {
+    width: 100%;
+    border-radius: 10px;
+}
+
+.product-card button {
+    background: #007BFF;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.product-card button:hover {
+    background: #0056b3;
+}
+
+/* หัวข้อ */
+.main-header {
+    text-align: center;
+    color: white;
+    padding: 15px;
+}
+.red {
+        color: #660033;
+    }
+
+
+
+ 
