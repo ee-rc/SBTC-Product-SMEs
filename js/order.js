@@ -154,7 +154,7 @@ if (placeOrderBtn) {
       
       alert("✅ สั่งซื้อสำเร็จ!");
       localStorage.removeItem("cart");
-      window.location.href = "success.html";
+      window.location.href = "Order list.js";
     } catch (error) {
       console.error("เกิดข้อผิดพลาด:", error);
       alert("❌ กรุณาลองใหม่");
