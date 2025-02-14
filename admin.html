@@ -2,44 +2,196 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <title>จัดการแอดมิน</title>
-    <script type="module">
-        import { getAuth } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
-        import { getFirestore, collection, getDocs, updateDoc, doc } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ระบบแอดมิน - คำสั่งซื้อ</title>
+    <link rel="stylesheet" href="styles.css">
+    <script type="module" src="js/admin.js"></script>
+    <style>
+    
 
-        const auth = getAuth();
-        const db = getFirestore();
 
-        async function loadPendingAdmins() {
-            const adminsCollection = collection(db, "admins");
-            const adminSnapshot = await getDocs(adminsCollection);
-            const adminList = document.getElementById("adminList");
-
-            adminSnapshot.forEach((adminDoc) => {
-                const adminData = adminDoc.data();
-                if (adminData.role === "admin" && !adminData.approved) {
-                    const listItem = document.createElement("li");
-                    listItem.textContent = adminDoc.id;
-
-                    const approveButton = document.createElement("button");
-                    approveButton.textContent = "อนุมัติ";
-                    approveButton.onclick = async () => {
-                        await updateDoc(doc(db, "admins", adminDoc.id), { approved: true });
-                        alert("อนุมัติแอดมินเรียบร้อย");
-                        listItem.remove();
-                    };
-
-                    listItem.appendChild(approveButton);
-                    adminList.appendChild(listItem);
-                }
-            });
+        /* เมนูแถบข้าง */
+        .menu-button {
+            font-size: 30px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 15px;
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            z-index: 1000;
+            color: #333;
         }
 
-        loadPendingAdmins();
+        .menu {
+            position: fixed;
+            top: 0;
+            left: -280px; 
+            width: 250px;
+            height: 100%;
+            background: #333;
+            padding-top: 60px;
+            transition: 0.3s;
+            box-shadow: 3px 0px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .menu a {
+            display: block;
+            padding: 15px;
+            text-decoration: none;
+            color: white;
+            font-size: 18px;
+            text-align: center;
+            transition: 0.3s;
+        }
+
+        .menu a:hover {
+            background: #575757;
+        }
+
+        .close-button {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 30px;
+            color: white;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .admin-info {
+            text-align: center;
+            color: white;
+            padding: 20px 10px;
+            border-top: 1px solid #575757;
+        }
+        </style>
+        <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f4f4f4;
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+        .order-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        .order-slip {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 15px;
+            background: #f9f9f9;
+            border-radius: 5px;
+            transition: 0.3s;
+        }
+        .order-slip:hover {
+            background: #f1f1f1;
+        }
+        .order-slip p {
+            margin: 8px 0;
+            font-size: 14px;
+            color: #444;
+        }
+        .order-slip strong {
+            color: #000;
+        }
+        .product-list {
+            background: #fff;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        .product-list img {
+            width: 80px;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+        .button-group {
+            margin-top: 10px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .button-group button {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+        .confirm {
+            background: #28a745;
+            color: white;
+        }
+        .cancel {
+            background: #dc3545;
+            color: white;
+        }
+        .confirm:hover {
+            background: #218838;
+        }
+        .cancel:hover {
+            background: #c82333;
+        }
+        .order-slip p {
+    text-align: left;
+}
+    </style>
+    <script>
+        function openMenu() {
+            document.getElementById("menu").style.left = "0";
+        }
+
+        function closeMenu() {
+            document.getElementById("menu").style.left = "-280px";
+        }
+
+        window.onload = function() {
+            let correctPassword = "gamione09@gmail.com"; 
+            let userPassword = prompt("🔒 กรุณาใส่รหัสผ่านเพื่อเข้าสู่ระบบแอดมิน:");
+
+            if (userPassword !== correctPassword) {
+                alert("❌ รหัสผ่านไม่ถูกต้อง!");
+                window.location.href = "products.html"; 
+            }
+        };
     </script>
 </head>
 <body>
-    <h2>รายการแอดมินที่รออนุมัติ</h2>
-    <ul id="js/adminList"></ul>
+
+    <!-- ปุ่มสามขีด -->
+    <button class="menu-button" onclick="openMenu()">☰</button>
+
+    <!-- เมนูแถบข้าง -->
+    <div class="menu" id="menu">
+        <button class="close-button" onclick="closeMenu()">×</button>
+        
+      
+        
+        <div class="admin-info">
+            <h3>📌 สมาชิกแอดมิน</h3>
+            <p>gamione09@gmail.com</p>
+        </div>
+    </div>
+
+    <!-- รายการคำสั่งซื้อ -->
+    <h2>📦 รายการคำสั่งซื้อ</h2>
+    <div class="order-container">
+        <div id="orderList">
+            </div>
+        </div>
+    </div>
+
 </body>
 </html>

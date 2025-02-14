@@ -143,14 +143,21 @@
         function loadCart() {
             let cart = JSON.parse(localStorage.getItem("cart")) || [];
             let cartHTML = "";
+            let totalPrice = 0;  // รีเซ็ตค่ารวม
+
             cart.forEach((item, index) => {
+                let itemPrice = Number(item.price);  // แปลงเป็นตัวเลข
+                totalPrice += itemPrice;
+
                 cartHTML += `<div>
                     <img src="${item.image}" width="50">
-                    <b>${item.name}</b> - ${item.price} บาท
+                    <b>${item.name}</b> - ${itemPrice} บาท
                     <button class="button delete" onclick="removeFromCart(${index})">ลบ</button>
                 </div>`;
             });
+
             document.getElementById("cartItems").innerHTML = cartHTML;
+            document.getElementById("totalPrice").innerText = `รวมทั้งหมด: ${totalPrice} บาท`;
         }
 
         function removeFromCart(index) {
@@ -171,8 +178,9 @@
                 alert("ตะกร้าว่างเปล่า!");
                 return;
             }
-            let orderText = cart.map(item => `${item.name} - ${item.price} บาท`).join("\n");
-            localStorage.setItem("order", orderText);
+
+            // บันทึกข้อมูลสินค้าใน localStorage แล้วไปที่หน้า order.html
+            localStorage.setItem("orderData", JSON.stringify(cart));
             window.location.href = "order.html";
         }
 
@@ -196,8 +204,9 @@
 <!-- ตะกร้าสินค้า -->
 <div id="cartItems"></div>
 
-<!-- ปุ่มต่างๆ -->
+<!-- แสดงราคารวม -->
 <div class="cart-buttons">
+    <h3 id="totalPrice">รวมทั้งหมด: 0 บาท</h3>
     <button class="button" onclick="clearCart()">ล้างตะกร้า</button>
     <button class="button" onclick="checkout()">สั่งซื้อ</button>
 </div>

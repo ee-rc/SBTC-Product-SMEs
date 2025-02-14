@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ใบสลิปคำสั่งซื้อ</title>
+  <link rel="stylesheet" href="order.css">
+  <script type="module" src="js/order.js"></script>
+  <script type="module" src="js/auth.js"></script>
+</head>
+
+<body>
+  <div class="container">
+    <h2>📜 ใบสลิปคำสั่งซื้อ</h2>
+    
+    <h3>🛒 รายการสินค้า</h3>
+    <div id="productList" class="product-list"></div>
+    
+    <p class="total-price">💰 รวมทั้งหมด: <span id="totalPrice">0</span> บาท</p>
+    <h3>📌 ข้อมูลลูกค้า</h3>
+    <form id="orderForm">
+      <label>👤 ชื่อ-นามสกุล: <input type="text" id="name" required></label>
+      <label>📍 ที่อยู่จัดส่ง: <input type="text" id="address" required></label>
+      <label>📞 เบอร์โทรศัพท์: <input type="tel" id="phone" required pattern="[0-9]{10}" placeholder="กรอกเบอร์โทร 10 หลัก"></label>
+      <label>📝 หมายเหตุ (ถ้ามี): <textarea id="note" placeholder="ใส่รายละเอียดเพิ่มเติม..."></textarea></label>
+      <buttrr type="buttrr" id="placeOrder">✅ ยืนยันคำสั่งซื้อ</buttrr>
+    </form>
+    <p id="loginPrompt" style="color:red; display:none;">กรุณาล็อกอินก่อนทำการสั่งซื้อ</p>
+    
+  </div>
+</body>
+
+</html>

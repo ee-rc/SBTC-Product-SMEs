@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>คำสั่งซื้อ</title>
+    <link rel="stylesheet" href="">
+    <script type="module" src="js/Order list.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f4f4f4;
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+        .order-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        .order-slip {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 15px;
+            background: #f9f9f9;
+            border-radius: 5px;
+            transition: 0.3s;
+        }
+        .order-slip:hover {
+            background: #f1f1f1;
+        }
+        .order-slip p {
+            margin: 8px 0;
+            font-size: 14px;
+            color: #444;
+        }
+        .order-slip strong {
+            color: #000;
+        }
+        .product-list {
+            background: #fff;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        .product-list img {
+            width: 100px;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+        .button-group {
+            margin-top: 10px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .button-group button {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+        .confirm {
+            background: #28a745;
+            color: white;
+        }
+        .cancel {
+            background: #dc3545;
+            color: white;
+        }
+        .confirm:hover {
+            background: #218838;
+        }
+        .cancel:hover {
+            background: #c82333;
+        }
+        .product-list {
+  display: flex;
+  align-items: center;
+  border-bottom: 10px solid #ddd;
+  padding: 5px 0;
+}
+
+.product-image {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  margin-right: 10px;
+  border-radius: 5px;
+}
+
+.order-products {
+  margin-top: 10px;
+}
+    </style>
+    <style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* สไตล์ปุ่มสามขีด */
+  .menu-button {
+    font-size: 30px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 15px;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+  }
+
+  /* แถบเมนู */
+  .menu {
+    position: fixed;
+    top: 0;
+    left: -250px;
+    /* ซ่อนเมนูไว้ก่อน */
+    width: 250px;
+    height: 100%;
+    background: #333;
+    padding-top: 60px;
+    transition: 0.3s;
+  }
+
+  /* ปุ่มปิดเมนู */
+  .close-button {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 30px;
+    color: white;
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
+
+  /* ลิงก์ในเมนู */
+  .menu a {
+    display: block;
+    padding: 15px;
+    text-decoration: none;
+    color: white;
+    font-size: 18px;
+    text-align: center;
+  }
+
+  .menu a:hover {
+    background: #575757;
+  }
+</style>
+<script>
+  function openMenu() {
+    document.getElementById("menu").style.left = "0";
+  }
+
+  function closeMenu() {
+    document.getElementById("menu").style.left = "-250px";
+  }
+</script>
+</head>
+<body>
+  <!-- ปุ่มสามขีด -->
+    <button class="menu-button" onclick="openMenu()">☰</button>
+    <!-- เมนู -->
+    <div class="menu" id="menu">
+      <button class="close-button" onclick="closeMenu()">×</button>
+      <a href="products.html">กลับหน้าสินค่า</a>
+
+    </div>
+  
+    <h2>📦 รายการคำสั่งซื้อ</h2>
+    <div class="order-container">
+        <div id="orderList"></div>
+    </div>
+</body>
+</html>
