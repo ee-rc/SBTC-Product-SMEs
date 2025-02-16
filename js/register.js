@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-auth.js";
-import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-firestore.js";
+import { getFirestore, collection, addDoc, doc, setDoc } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-firestore.js";
 
 // ตั้งค่า Firebase
 const firebaseConfig = {
@@ -19,34 +19,35 @@ const db = getFirestore(app);
 // การสมัครสมาชิก
 document.getElementById("register-form").addEventListener("submit", async (e) => {
   e.preventDefault();
-
-  const name = document.getElementById("name").value;
+  
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
   const confirmPassword = document.getElementById("confirm-password").value;
   const errorMessage = document.getElementById("error-message");
-
+  
   // ตรวจสอบว่ารหัสผ่านตรงกันหรือไม่
   if (password !== confirmPassword) {
     errorMessage.textContent = "รหัสผ่านไม่ตรงกัน กรุณาลองใหม่อีกครั้ง!";
     return;
   }
-
+  
   try {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
-
-    // บันทึกข้อมูลผู้ใช้ใน Firestore
-    await addDoc(collection(db, "users"), {
+    
+    console.log("User UID:", user.uid); // ตรวจสอบค่า UID ใน console
+    
+    // บันทึกข้อมูลผู้ใช้ใน Firestore โดยใช้ UID เป็น ID ของเอกสาร
+    await setDoc(doc(db, "users", user.uid), {
       uid: user.uid,
-      name: name,
       email: email,
       createdAt: new Date()
     });
-
+    
     alert("สมัครสมาชิกสำเร็จ!");
     window.location.href = "login.html"; // ไปหน้าเข้าสู่ระบบ
   } catch (error) {
+    console.error("Error:", error.message);
     errorMessage.textContent = error.message;
   }
 });
