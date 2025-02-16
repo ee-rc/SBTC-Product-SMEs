@@ -3,26 +3,144 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=1024, initial-scale=1.0,maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>SBTC product ผู้ประกอบการรายใหม่ (SMEs)</title>
     <link rel="stylesheet" href="styles.css">
     <script>
-        // ป้องกันการซูมด้วย Ctrl + Scroll
-        document.addEventListener("wheel", function(event){
-            if (event.ctrlKey) {
-                event.preventDefault();
-            }
-        }, { passive: false });
+        /* ตั้งค่าทั่วไป */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
 
-        // ป้องกันการซูมด้วย Gesture บนมือถือ
-        document.addEventListener("gesturestart", function(event) {
-            event.preventDefault();
-        });
+/* ปรับ Header */
+.main-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #007bff;
+    color: white;
+    padding: 15px;
+    width: 100%;
+}
 
-        // ป้องกันการเปลี่ยนขนาดหน้าต่าง
-        window.onresize = function() {
-            window.resizeTo(1024, 768);
-        };
+.logo {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.logo-img {
+    max-width: 80px;
+    height: auto;
+}
+
+/* ปรับขนาดตัวหนังสือ */
+h2, h3 {
+    margin: 5px 0;
+}
+
+/* ปุ่มเมนู */
+.header-nav {
+    margin-top: 10px;
+}
+
+.header-nav a {
+    display: inline-block;
+    padding: 10px 15px;
+    background-color: #0056b3;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    margin: 5px;
+}
+
+.header-nav a:hover {
+    background-color: #003f7f;
+}
+
+/* ปรับแต่งส่วนแสดงสินค้า */
+.product-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+    padding: 20px;
+}
+
+.product-card {
+    width: 100%;
+    max-width: 300px;
+    background-color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    overflow: hidden;
+    text-align: center;
+    padding: 15px;
+}
+
+.product-card img {
+    width: 100%;
+    height: auto;
+    border-bottom: 2px solid #ddd;
+}
+
+/* ปุ่ม "ดูสินค้า" */
+.view-products-section {
+    margin-top: 20px;
+}
+
+.btn-view-products {
+    display: inline-block;
+    padding: 12px 20px;
+    background-color: #28a745;
+    color: white;
+    text-decoration: none;
+    font-size: 18px;
+    border-radius: 5px;
+}
+
+.btn-view-products:hover {
+    background-color: #218838;
+}
+
+/* *** Media Queries สำหรับมือถือ *** */
+@media screen and (max-width: 768px) {
+    .main-header {
+        text-align: center;
+        flex-direction: column;
+    }
+
+    .logo {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .header-nav {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .product-list {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .product-card {
+        max-width: 90%;
+    }
+
+    .btn-view-products {
+        width: 90%;
+        text-align: center;
+    }
+}
     </script>
     <header class="main-header">
         <div class="logo">
@@ -30,8 +148,8 @@
             <img src="logo.png/Screenshot 2024-11-22 090420.png" alt="Logo 2" class="logo-img">
         </div>
         <div class="header-content">
-            <h2>SBTC Product ผู้ประกอบการรายใหม่ (SMEs)</h2>
-            <h3>วิทยาลัยเทคนิคจังหวัด</h3>
+            <h2>เว็บไซล์ SBTC Product ผู้ประกอบการรายใหม่ (SMEs)</h2>
+            <h3>วิทยาลัยเทคนิคสิงห์บุรี</h3>
         </div>
         <nav class="header-nav">
             <a href="login.html" class="btn blue">เข้าสู่ระบบ</a>
