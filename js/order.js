@@ -162,7 +162,6 @@ if (placeOrderBtn) {
         createdAt: new Date()
       });
       
-      alert("✅ สั่งซื้อสำเร็จ!");
       localStorage.removeItem("cart");
       window.location.href = "Order list.html";
     } catch (error) {
