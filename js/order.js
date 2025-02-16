@@ -25,19 +25,25 @@ onAuthStateChanged(auth, (user) => {
   if (user) {
     currentUser = user;
     if (document.getElementById("loginPrompt")) {
-      document.getElementById("loginPrompt").style.display = "none"; // ซ่อนข้อความล็อกอิน
+      document.getElementById("loginPrompt").style.display = "none";
     }
   } else {
     currentUser = null;
     if (document.getElementById("loginPrompt")) {
-      document.getElementById("loginPrompt").style.display = "block"; // แสดงข้อความให้ล็อกอิน
+      document.getElementById("loginPrompt").style.display = "block";
     }
   }
 });
 
 // ดึงข้อมูลตะกร้าสินค้า
 function getCart() {
-  return JSON.parse(localStorage.getItem("cart")) || [];
+  let cart = JSON.parse(localStorage.getItem("cart")) || [];
+  cart.forEach(item => {
+    if (!item.quantity || item.quantity < 1) {
+      item.quantity = 1;
+    }
+  });
+  return cart;
 }
 
 // บันทึกตะกร้าสินค้าลง LocalStorage
@@ -65,15 +71,17 @@ window.increaseQuantity = function(index) {
   }
 };
 
-// ฟังก์ชันลดจำนวนสินค้า (แก้ไขใหม่)
+// ฟังก์ชันลดจำนวนสินค้า (แก้ไขให้เหลือขั้นต่ำ 1 ชิ้น)
 window.decreaseQuantity = function(index) {
   let cart = getCart();
   if (cart[index]) {
     if (cart[index].quantity > 1) {
       cart[index].quantity -= 1;
-      saveCart(cart);
-      loadProductList();
+    } else {
+      cart[index].quantity = 1; // ป้องกันไม่ให้สินค้าหายไป
     }
+    saveCart(cart);
+    loadProductList();
   }
 };
 
@@ -86,10 +94,10 @@ function loadProductList() {
     productListHTML += `
       <div>
         <img src="${item.image}" width="50" alt="${item.name}">
-        <b>${item.name}</b> - ${item.price} บาท  
-        <button onclick="decreaseQuantity(${index})">-</button>
-        <span style="margin: 0 10px;">${item.quantity}</span>
+        <b>${item.name}</b> - ${item.price} บาท
         <button onclick="increaseQuantity(${index})">+</button>
+        <span id="quantity-${index}">${item.quantity}</span>
+        <button onclick="decreaseQuantity(${index})">-</button>
       </div>
     `;
   });
@@ -98,7 +106,7 @@ function loadProductList() {
     document.getElementById("productList").innerHTML = productListHTML;
   }
   
-  updateTotalPrice(); // อัปเดตราคาทั้งหมด
+  updateTotalPrice();
 }
 
 // เมื่อโหลดหน้าฟอร์ม
@@ -119,6 +127,7 @@ if (placeOrderBtn) {
     
     const name = document.getElementById("name").value.trim();
     const address = document.getElementById("address").value.trim();
+    const phone = document.getElementById("phone").value.trim();
     const note = document.getElementById("note").value.trim();
     
     const cart = getCart();
@@ -129,17 +138,17 @@ if (placeOrderBtn) {
     
     const totalPrice = cart.reduce((total, item) => total + item.price * item.quantity, 0);
     
-    if (!name || !address) {
-      alert("กรุณากรอกข้อมูลให้ครบถ้วน");
+    if (!name || !address || !phone) {
+      alert("กรุณากรอกข้อมูลให้ครบถ้วน (รวมถึงเบอร์โทรศัพท์)");
       return;
     }
     
     try {
       const docRef = await addDoc(collection(db, "orders"), {
-        address,
-        createdAt: new Date(),
-        email: currentUser.email,
         name,
+        address,
+        phone, // เพิ่มเบอร์โทรศัพท์ลง Firestore
+        email: currentUser.email,
         note,
         products: cart.map(item => ({
           name: item.name,
@@ -147,9 +156,10 @@ if (placeOrderBtn) {
           quantity: item.quantity,
           image: item.image
         })),
-        status: "รอยืนยัน",
         totalPrice,
-        userId: currentUser.uid
+        status: "รอยืนยัน",
+        userId: currentUser.uid,
+        createdAt: new Date()
       });
       
       alert("✅ สั่งซื้อสำเร็จ!");
