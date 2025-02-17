@@ -26,7 +26,6 @@ document.getElementById("login-form").addEventListener("submit", async (e) => {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
 
-    alert("เข้าสู่ระบบสำเร็จ!");
     window.location.href = "products.html"; // เปลี่ยนเส้นทางไปยังหน้าหลัก
   } catch (error) {
     errorMessage.textContent = "อีเมลหรือรหัสผ่านไม่ถูกต้อง!";
