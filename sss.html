@@ -153,10 +153,10 @@
       }
     }
 
-    // แสดงปุ่ม "รับสินค้าแล้ว" เฉพาะเมื่อสถานะเป็น "จัดส่งเสร็จสิ้นแล้ว"
+    // แสดงปุ่ม "รับสินค้าแล้ว" เฉพาะเมื่อสถานะเป็น "จัดส่งสำเร็จ"
     function addActionButtons(orderId, status) {
       orderDetails.innerHTML += `<br>`;
-      if (status === "จัดส่งเสร็จสิ้น") {
+      if (status === "จัดส่งสำเร็จ") {
         addReceivedButton(orderId);
       }
     }
