@@ -1,0 +1,179 @@
+</body>
+</html><!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ดูคำสั่งซื้อ</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f9f9f9;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    label {
+      font-size: 16px;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin-top: 8px;
+      margin-bottom: 20px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    .order-details {
+      margin-top: 30px;
+      padding: 20px;
+      background-color: #f1f1f1;
+      border-radius: 8px;
+    }
+    .order-details p {
+      font-size: 16px;
+      margin: 8px 0;
+    }
+    .order-products {
+      margin-top: 20px;
+    }
+    .product-list {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .product-list img {
+      width: 60px;
+      height: 60px;
+      margin-right: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>ดูคำสั่งซื้อ</h1>
+
+    <label for="orderIdInput">กรอก ID คำสั่งซื้อ:</label>
+    <input type="text" id="orderIdInput" placeholder="กรอก ID คำสั่งซื้อ">
+    <button id="viewOrderButton">ดูคำสั่งซื้อ</button>
+
+    <div id="orderDetails" class="order-details"></div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.0/firebase-app.js";
+    import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.3.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBTcik7Ldm_Bv_nwY8jq0xdhCx6LwUhu8g",
+      authDomain: "sdtc-b8863.firebaseapp.com",
+      projectId: "sdtc-b8863",
+      storageBucket: "sdtc-b8863.firebasestorage.app",
+      messagingSenderId: "1077154268954",
+      appId: "1:1077154268954:web:a385080364aa9759994ea3",
+      measurementId: "G-WZBWX7B35M"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const viewOrderButton = document.getElementById("viewOrderButton");
+    const orderDetails = document.getElementById("orderDetails");
+
+    viewOrderButton.addEventListener("click", () => {
+      const orderId = document.getElementById("orderIdInput").value.trim();
+      if (orderId) {
+        loadOrderDetails(orderId);
+      } else {
+        alert("กรุณากรอก ID คำสั่งซื้อ");
+      }
+    });
+
+    async function loadOrderDetails(orderId) {
+      const orderDocRef = doc(db, "orders", orderId);
+      const orderDoc = await getDoc(orderDocRef);
+
+      if (orderDoc.exists()) {
+        const order = orderDoc.data();
+        const createdAt = order.createdAt ? new Date(order.createdAt.seconds * 1000).toLocaleString() : "ไม่ระบุ";
+
+        let productHTML = "";
+        if (order.products && order.products.length > 0) {
+          productHTML = order.products.map(item => `
+            <div class="product-list">
+              <img src="${item.image}" alt="${item.name}">
+              <p><strong>${item.name}</strong> - ${item.price} บาท</p>
+            </div>
+          `).join("");
+        }
+
+        const orderHtml = `
+          <h3>🆔 คำสั่งซื้อ: ${orderId}</h3>
+          <p><strong>👤 ชื่อ:</strong> ${order.name}</p>
+          <p><strong>📧 อีเมล:</strong> ${order.email || "ไม่ระบุ"}</p>
+          <p><strong>📍 ที่อยู่:</strong> ${order.address}</p>
+          <p><strong>📝 หมายเหตุ:</strong> ${order.note || "ไม่มี"}</p>
+          <p><strong>📅 เวลาสั่งซื้อ:</strong> ${createdAt}</p>
+          <p><strong>💰 ราคารวม:</strong> ${order.totalPrice} บาท</p>
+          <div class="order-products">${productHTML}</div>
+          <p><strong>📦 สถานะ:</strong> ${order.status}</p>
+        `;
+
+        orderDetails.innerHTML = orderHtml;
+        addActionButtons(orderId, order.status);
+      } else {
+        alert("ไม่พบคำสั่งซื้อที่มี ID นี้");
+        orderDetails.innerHTML = "";
+      }
+    }
+
+    // แสดงปุ่ม "รับสินค้าแล้ว" เฉพาะเมื่อสถานะเป็น "จัดส่งเสร็จสิ้นแล้ว"
+    function addActionButtons(orderId, status) {
+      orderDetails.innerHTML += `<br>`;
+      if (status === "จัดส่งเสร็จสิ้น") {
+        addReceivedButton(orderId);
+      }
+    }
+
+    function addReceivedButton(orderId) {
+      const receivedButton = document.createElement("button");
+      receivedButton.textContent = "🎁 รับสินค้าแล้ว";
+      receivedButton.onclick = () => receivedOrder(orderId);
+      orderDetails.appendChild(receivedButton);
+    }
+
+    async function receivedOrder(orderId) {
+      const orderDocRef = doc(db, "orders", orderId);
+      await updateDoc(orderDocRef, { status: "ได้รับสินค้าแล้ว" });
+      alert("🎉 คำสั่งซื้อได้รับสินค้าแล้ว");
+      loadOrderDetails(orderId);
+    }
+  </script>
+</body>
+</html>
