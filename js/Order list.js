@@ -26,6 +26,13 @@ onAuthStateChanged(auth, (user) => {
     if (orderList) orderList.innerHTML = "<p>⚠️ กรุณาเข้าสู่ระบบเพื่อดูคำสั่งซื้อของคุณ</p>";
   }
 });
+window.copyOrderId = (orderId) => {  
+  navigator.clipboard.writeText(orderId).then(() => {  
+    ("✅ คัดลอกหมายเลขคำสั่งซื้อสำเร็จ!");  
+  }).catch(() => {  
+    alert("❌ ไม่สามารถคัดลอกได้!");  
+  });  
+};
 
 // โหลดคำสั่งซื้อ
 function loadOrders(user) {
@@ -48,15 +55,15 @@ function loadOrders(user) {
       orderItem.classList.add("order-slip");
       orderItem.id = orderId;
       
-      orderItem.innerHTML = `
-        <p><strong>🆔 คำสั่งซื้อ:</strong> ${orderId}</p>
-        <p><strong>👤 ชื่อ:</strong> ${order.name}</p>
-        <p><strong>📍 ที่อยู่:</strong> ${order.address}</p>
-        <p><strong>📞 เบอร์โทร:</strong> ${order.phone}</p>
-        <p><strong>💰 ราคารวม:</strong> ${order.totalPrice} บาท</p>
-        <p><strong>📝 หมายเหตุ:</strong> ${order.note || "ไม่มี"}</p
-        <p><strong>📦 สถานะ:</strong> <span class="order-status">${order.status}</span></p>
-      `;
+      orderItem.innerHTML = `  
+  <p><strong>🆔 คำสั่งซื้อ:</strong> ${orderId} <button class="copy-id" onclick="copyOrderId('${orderId}')">📋 คัดลอก ID</button></p>  
+  <p><strong>👤 ชื่อ:</strong> ${order.name}</p>  
+  <p><strong>📍 ที่อยู่:</strong> ${order.address}</p>  
+  <p><strong>📞 เบอร์โทร:</strong> ${order.phone}</p>  
+  <p><strong>💰 ราคารวม:</strong> ${order.totalPrice} บาท</p>  
+  <p><strong>📝 หมายเหตุ:</strong> ${order.note || "ไม่มี"}</p>  
+  <p><strong>📦 สถานะ:</strong> <span class="order-status">${order.status}</span></p>  
+`;
       
       if (order.products && Array.isArray(order.products) && order.products.length > 0) {
         const productList = document.createElement("div");
@@ -87,7 +94,7 @@ function loadOrders(user) {
           <button class="confirm" onclick="confirmOrder('${orderId}')">✅ ยืนยัน</button>
           <button class="cancel" onclick="cancelOrder('${orderId}')">❌ ยกเลิก</button>
         `;
-      } else if (order.status === "ยืนยันแล้ว") {
+      } else if (order.status === "จัดส่งเสร็จสิ้น") {
         buttonGroup.innerHTML = `
           <button class="received" onclick="receivedOrder('${orderId}')">📦 รับสินค้า</button>
         `;
@@ -145,9 +152,12 @@ window.editOrder = async (orderId) => {
       const newPhone = prompt("📞 ป้อนเบอร์โทรใหม่:", orderData.phone);
       if (newPhone) updateData.phone = newPhone;
     } else if (editChoice === "4") {
-      const newPhone = prompt("📝 หมายเหตุ", orderData.phone);
-      if (newPhone) updateData.note = newPhone;
-    } else {
+  const newNote = prompt("📝 หมายเหตุ", orderData.note);
+  if (newNote) updateData.note = newNote;
+} else if (editChoice === "5") {
+  const newQuantity = prompt("🔢 จำนวนสินค้า", orderData.quantity);
+  if (newQuantity) updateData.quantity = newQuantity;
+} else {
       alert("⚠️ กรุณาเลือกตัวเลือกที่ถูกต้อง!");
       return;
     }
@@ -159,9 +169,11 @@ window.editOrder = async (orderId) => {
     const orderItem = document.getElementById(orderId);
     if (orderItem) {
       if (updateData.name) orderItem.querySelector("p:nth-child(2)").innerHTML = `<strong>👤 ชื่อ:</strong> ${updateData.name}`;
-      if (updateData.address) orderItem.querySelector("p:nth-child(3)").innerHTML = `<strong>📍 ที่อยู่:</strong> ${updateData.address}`;
-      if (updateData.phone) orderItem.querySelector("p:nth-child(4)").innerHTML = `<strong>📞 เบอร์โทร:</strong> ${updateData.phone}`;
-      if (updateData.phone) orderItem.querySelector("p:nth-child(5)").innerHTML = `<strong>📝 หมายเหตุ:</strong> ${updateData.note}`;
+      if (updateData.name) orderItem.querySelector("p:nth-child(2)").innerHTML = `<strong>👤 ชื่อ:</strong> ${updateData.name}`;
+if (updateData.address) orderItem.querySelector("p:nth-child(3)").innerHTML = `<strong>📍 ที่อยู่:</strong> ${updateData.address}`;
+if (updateData.phone) orderItem.querySelector("p:nth-child(4)").innerHTML = `<strong>📞 เบอร์โทร:</strong> ${updateData.phone}`;
+if (updateData.note) orderItem.querySelector("p:nth-child(6)").innerHTML = `<strong>📝 หมายเหตุ:</strong> ${updateData.note}`;
+
             
 
     }
@@ -193,4 +205,5 @@ window.receivedOrder = async (orderId) => {
   } catch (error) {
     alert("❌ ไม่สามารถอัปเดตสถานะการรับสินค้าได้");
   }
+  
 };
