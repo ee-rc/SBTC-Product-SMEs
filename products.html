@@ -249,102 +249,104 @@ onAuthStateChanged(auth, (user) => {
     </style>
     <head>
     <style>
-        body {
+        bodyl {
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
             background-color: #121212;
         }
-        
-        .header-content {
-            position: absolute; /* ล็อกตำแหน่ง */
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            text-align: center;
-            font-size: 24px;
-            font-weight: bold;
-            color: white;
-        }
-
         .search {
             display: flex;
             align-items: center;
             position: relative;
-            background-color: #00E8FF;
-            border-radius: 25px;
-            padding: 5px;
         }
-
         .input {
+            background-color: #00E8FF;
             border: 0;
             font-size: 16px;
             color: #1e272e;
-            padding: 10px;
+            padding: 15px;
             height: 40px;
-            width: 0px; /* ซ่อนก่อน */
-            transition: width 0.5s ease-in-out;
-            border-radius: 20px;
+            width: 40px;
+            transition: width 0.8s ease;
+            border-radius: 25px;
             outline: none;
-            background: none;
         }
-
         .search.active .input {
-            width: 180px; /* ขยายเมื่อ active */
+            width: 200px;
         }
-
         .btn {
             background: none;
             border: none;
             cursor: pointer;
-            font-size: 20px;
-            margin-left: 5px;
-            color: black;
+            position: absolute;
+            right: 10px;
         }
+        .header-content {
+    position: absolute; /* หรือใช้ fixed ถ้าต้องการให้ติดหน้าจอตลอด */
+    top: 20px; /* ปรับตำแหน่งตามต้องการ */
+    left: 50%;
+    transform: translateX(-50%); /* จัดให้อยู่ตรงกลาง */
+    text-align: center;
+    font-size: 24px;
+    font-weight: bold;
+    color: white;
+}
+
     </style>
+    </head>
+    <body>
+
 </head>
-
 <body>
+    
+</head>
+<body>
+  
     <header class="main-header">
-        <div class="header-content">
-            <h2>สินค้า</h2> <!-- 🔒 ล็อกตำแหน่ง -->
-        </div>
+      <div class="search" id="search">
+    <input type="text" class="input" id="input" placeholder="Search...">
+    <button class="btn bodyl" id="btn">
+        🔍
+    </button>
+</div>
 
-        <div class="search" id="search">
-            <input type="text" class="input" id="input" placeholder="Search...">
-            <button class="btn" id="btn">🔍</button>
-        </div>
-    </header>
+<script>
+    const search = document.getElementById('search');
+    const btn = document.getElementById('btn');
+    const input = document.getElementById('input');
 
-    <script>
-        const search = document.getElementById('search');
-        const btn = document.getElementById('btn');
-        const input = document.getElementById('input');
+    // เปิด-ปิดช่องค้นหาเมื่อคลิกปุ่ม
+    btn.addEventListener('click', () => {
+        search.classList.toggle('active');
+        input.focus();
+        searchProducts(); // ค้นหาสินค้าทันทีเมื่อกดปุ่ม 🔍
+    });
 
-        btn.addEventListener('click', () => {
-            search.classList.toggle('active');
-            input.focus();
+    // ค้นหาสินค้าทุกครั้งที่พิมพ์
+    input.addEventListener('keyup', searchProducts);
+
+    // ฟังก์ชันค้นหาสินค้า
+    function searchProducts() {
+        const inputValue = input.value.trim().toLowerCase(); // เอาช่องว่างออกและแปลงเป็นตัวพิมพ์เล็ก
+        const products = document.querySelectorAll(".product-card");
+
+        products.forEach(product => {
+            const productName = product.querySelector("h2").textContent.toLowerCase();
+            const productDescription = product.querySelector("p").textContent.toLowerCase();
+
+            if (inputValue === "" || productName.includes(inputValue) || productDescription.includes(inputValue)) {
+                product.style.display = "block"; // แสดงสินค้า
+            } else {
+                product.style.display = "none"; // ซ่อนสินค้า
+            }
         });
-
-        input.addEventListener('keyup', searchProducts);
-
-        function searchProducts() {
-            const inputValue = input.value.trim().toLowerCase();
-            const products = document.querySelectorAll(".product-card");
-
-            products.forEach(product => {
-                const productName = product.querySelector("h2").textContent.toLowerCase();
-                const productDescription = product.querySelector("p").textContent.toLowerCase();
-
-                if (inputValue === "" || productName.includes(inputValue) || productDescription.includes(inputValue)) {
-                    product.style.display = "block";
-                } else {
-                    product.style.display = "none";
-                }
-            });
-        }
-    </script>
+    }
+</script>
+        <div class="header-content">
+            <h2>สินค้า</h2>
+        </div>
 </body>
 
         
