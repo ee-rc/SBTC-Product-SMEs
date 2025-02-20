@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>สรุปการขาย</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.0/firebase-app.js";
+        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/11.3.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBTcik7Ldm_Bv_nwY8jq0xdhCx6LwUhu8g",
+            authDomain: "sdtc-b8863.firebaseapp.com",
+            projectId: "sdtc-b8863",
+            storageBucket: "sdtc-b8863.firebasestorage.app",
+            messagingSenderId: "1077154268954",
+            appId: "1:1077154268954:web:a385080364aa9759994ea3",
+            measurementId: "G-WZBWX7B35M"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        async function loadSalesSummary() {
+            const ordersSnapshot = await getDocs(collection(db, "orders"));
+            let totalSales = 0;
+            let receivedOrders = 0, deliveredOrders = 0, pendingOrders = 0;
+            let receivedAmount = 0, deliveredAmount = 0, pendingAmount = 0;
+            let productSales = {};
+
+            ordersSnapshot.forEach(doc => {
+                const order = doc.data();
+                totalSales += order.totalPrice;
+
+                if (order.status === "ได้รับสินค้า") {
+                    receivedOrders++;
+                    receivedAmount += order.totalPrice;
+                } else if (order.status === "จัดส่งสำเร็จ") {
+                    deliveredOrders++;
+                    deliveredAmount += order.totalPrice;
+                } else {
+                    pendingOrders++;
+                    pendingAmount += order.totalPrice;
+                }
+
+                order.products.forEach(product => {
+                    productSales[product.name] = (productSales[product.name] || 0) + product.quantity;
+                });
+            });
+
+            document.getElementById("totalSales").textContent = totalSales.toLocaleString();
+            document.getElementById("receivedOrders").textContent = receivedOrders;
+            document.getElementById("deliveredOrders").textContent = deliveredOrders;
+            document.getElementById("pendingOrders").textContent = pendingOrders;
+            document.getElementById("receivedAmount").textContent = receivedAmount.toLocaleString();
+            document.getElementById("deliveredAmount").textContent = deliveredAmount.toLocaleString();
+            document.getElementById("pendingAmount").textContent = pendingAmount.toLocaleString();
+
+            renderChart(productSales);
+        }
+
+        function renderChart(productSales) {
+            const ctx = document.getElementById('salesChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: Object.keys(productSales),
+                    datasets: [{
+                        label: 'จำนวนที่ขายได้',
+                        data: Object.values(productSales),
+                        backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        document.addEventListener("DOMContentLoaded", loadSalesSummary);
+    </script>
+</head>
+<body>
+    <h2>📊 สรุปการขาย</h2>
+    <p>💰 ยอดขายรวม: <strong id="totalSales">0</strong> บาท</p>
+    <p>📦 คำสั่งซื้อที่ได้รับสินค้า: <strong id="receivedOrders">0</strong> รายการ</p>
+    <p>🚚 คำสั่งซื้อที่จัดส่งสำเร็จ: <strong id="deliveredOrders">0</strong> รายการ</p>
+    <p>⏳ คำสั่งซื้อที่ยังไม่ถึง: <strong id="pendingOrders">0</strong> รายการ</p>
+    <p>✅ ยอดเงินที่ได้รับแล้ว (ได้รับสินค้า): <strong id="receivedAmount">0</strong> บาท</p>
+    <p>✅ ยอดเงินที่ได้รับแล้ว (จัดส่งสำเร็จ): <strong id="deliveredAmount">0</strong> บาท</p>
+    <p>⏳ ยอดเงินที่รอยืนยัน: <strong id="pendingAmount">0</strong> บาท</p>
+    <canvas id="salesChart" width="400" height="200"></canvas>
+</body>
+</html>
