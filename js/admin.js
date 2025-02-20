@@ -35,6 +35,10 @@ function loadOrders() {
     snapshot.forEach((docSnap) => {
       ordersData.push({ id: docSnap.id, ...docSnap.data() });
     });
+
+    // เรียงคำสั่งซื้อจากใหม่ไปเก่า
+    ordersData.sort((a, b) => b.createdAt.seconds - a.createdAt.seconds);
+
     renderOrders();
   });
 }
