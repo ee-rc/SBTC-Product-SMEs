@@ -275,8 +275,8 @@ onAuthStateChanged(auth, (user) => {
             font-size: 16px;
             color: #1e272e;
             padding: 15px;
-            height: 40px;
-            width: 40px;
+            height: 30px;
+            width: 30px;
             transition: width 0.8s ease;
             border-radius: 25px;
             outline: none;
@@ -291,6 +291,17 @@ onAuthStateChanged(auth, (user) => {
             position: absolute;
             right: 10px;
         }
+      .header-content {
+    position: absolute; /* หรือใช้ fixed ถ้าต้องการให้ติดหน้าจอตลอด */
+    top: 20px; /* ปรับตำแหน่งตามต้องการ */
+    left: 50%;
+    transform: translateX(-50%); /* จัดให้อยู่ตรงกลาง */
+    text-align: center;
+    font-size: 24px;
+    font-weight: bold;
+    color: white;
+}
+
     </style>
     </head>
     <body>
