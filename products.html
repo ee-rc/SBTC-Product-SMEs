@@ -8,7 +8,155 @@
     <title>หน้าสินค้า</title>
     <link rel="stylesheet" href="styles.css">
       <script type="module" src="js/auth.js"></script>
+<div id="toast-container"></div> <!-- Container สำหรับแสดง Toast -->
+    <script type="module">
+        // นำเข้า Firebase
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
 
+        // กำหนดค่า Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyBTcik7Ldm_Bv_nwY8jq0xdhCx6LwUhu8g",
+            authDomain: "sdtc-b8863.firebaseapp.com",
+            projectId: "sdtc-b8863",
+            storageBucket: "sdtc-b8863.appspot.com", // แก้ไขให้ถูกต้อง
+            messagingSenderId: "1077154268954",
+            appId: "1:1077154268954:web:a385080364aa9759994ea3",
+            measurementId: "G-WZBWX7B35M"
+        };
+
+        // เริ่มต้นใช้งาน Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // ตรวจสอบสิทธิ์ของผู้ใช้
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                const userRef = doc(db, "users", user.uid);
+                const userSnap = await getDoc(userRef);
+
+                if (userSnap.exists() && userSnap.data().admin === true) {
+                    console.log("User is Admin");
+                    document.querySelectorAll(".edit-button").forEach(btn => {
+                        btn.style.display = "inline-block"; // แสดงปุ่มแก้ไข
+                    });
+                } else {
+                    console.log("User is NOT Admin");
+                }
+            }
+        });
+    </script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* สไตล์ปุ่มแก้ไข */
+        .edit-button {
+            display: none; /* ซ่อนปุ่มแก้ไขโดยค่าเริ่มต้น */
+
+     
+
+
+  
+        }
+
+        .edit-button:hover {
+            background-color: #e67e22;
+        }
+
+        .footer {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 30px; /* ระยะห่างระหว่างไอคอน */
+            padding: 15px;
+            background-color: #f8f8f8;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .footer a {
+            font-size: 2rem; /* ขยายไอคอนให้ใหญ่ขึ้น */
+            text-decoration: none;
+        }
+
+        /* ปรับสไตล์สำหรับช่องค้นหา */
+        .search-container {
+            margin-top: 20px;
+            padding: 10px;
+            display: flex;
+            justify-content: center; /* จัดตำแหน่งช่องค้นหากลาง */
+        }
+
+        .search-container input {
+            padding: 10px;
+            width: 60%; /* ให้ช่องค้นหามีขนาดไม่ใหญ่มาก */
+            max-width: 400px;
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box; /* ให้คำนวณขนาดรวม padding */
+        }
+
+        .product-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-evenly;
+            margin: 20px;
+        }
+
+        .product-card {
+            width: 250px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px;
+            text-align: center;
+        }
+
+        .product-card img {
+            width: 100%;
+            border-radius: 8px;
+        }
+
+        .product-card h2 {
+            font-size: 1.2rem;
+            margin: 10px 0;
+        }
+
+        .product-card p {
+            font-size: 1rem;
+            color: #555;
+        }
+
+        .product-card button {
+            padding: 10px;
+            background-color: #27ae60;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .product-card button:hover {
+            background-color: #2ecc71;
+        }
+
+        /* เพิ่มสไตล์หัวข้อ */
+        h1 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-top: 20px;
+            color: #333;
+        }
+    </style>
   <script>
   
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
@@ -108,30 +256,95 @@ onAuthStateChanged(auth, (user) => {
             document.getElementById("menu").style.left = "-250px";
         }
     </script>
+    <style>
+        bodyl {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #121212;
+        }
+        .search {
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+        .input {
+            background-color: #00E8FF;
+            border: 0;
+            font-size: 16px;
+            color: #1e272e;
+            padding: 15px;
+            height: 40px;
+            width: 40px;
+            transition: width 0.8s ease;
+            border-radius: 25px;
+            outline: none;
+        }
+        .search.active .input {
+            width: 200px;
+        }
+        .btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            position: absolute;
+            right: 10px;
+        }
+    </style>
     </head>
     <body>
-    
-    <!-- ปุ่มสามขีด -->
-    <button class="menu-button" onclick="openMenu()">☰</button>
-    
-    <!-- เมนู<--></-->
-    <div class="menu" id="menu">
-        <button class="close-button" onclick="closeMenu()">×</button>
-        <div class="search-container">
-  <input type="text" id="searchInput" placeholder="ค้นหาสินค้า..." onkeyup="searchProducts()">
-</div>
-        
-        <a href="cart.html"> <div class="red">🛒 ตะกร้า (<span id="cartCount">0</span>)</div></a>
-        <a href="Order list.html"><div class="red"> 📦 ดูคำสั่งซื้อ </div></a>
-        <a href="admin.html">หน้าสำหรับแอดมิน</a>
-    </div>
+
+</head>
+<body>
     
 </head>
 <body>
+  
     <header class="main-header">
+      <div class="search" id="search">
+    <input type="text" class="input" id="input" placeholder="Search...">
+    <button class="btn bodyl" id="btn">
+        🔍
+    </button>
+</div>
+
+<script>
+    const search = document.getElementById('search');
+    const btn = document.getElementById('btn');
+    const input = document.getElementById('input');
+
+    // เปิด-ปิดช่องค้นหาเมื่อคลิกปุ่ม
+    btn.addEventListener('click', () => {
+        search.classList.toggle('active');
+        input.focus();
+        searchProducts(); // ค้นหาสินค้าทันทีเมื่อกดปุ่ม 🔍
+    });
+
+    // ค้นหาสินค้าทุกครั้งที่พิมพ์
+    input.addEventListener('keyup', searchProducts);
+
+    // ฟังก์ชันค้นหาสินค้า
+    function searchProducts() {
+        const inputValue = input.value.trim().toLowerCase(); // เอาช่องว่างออกและแปลงเป็นตัวพิมพ์เล็ก
+        const products = document.querySelectorAll(".product-card");
+
+        products.forEach(product => {
+            const productName = product.querySelector("h2").textContent.toLowerCase();
+            const productDescription = product.querySelector("p").textContent.toLowerCase();
+
+            if (inputValue === "" || productName.includes(inputValue) || productDescription.includes(inputValue)) {
+                product.style.display = "block"; // แสดงสินค้า
+            } else {
+                product.style.display = "none"; // ซ่อนสินค้า
+            }
+        });
+    }
+</script>
         <div class="header-content">
             <h2>สินค้า</h2>
         </div>
+        
         
     </header>
 
@@ -143,122 +356,4 @@ onAuthStateChanged(auth, (user) => {
                 <h2>แก้วเก็บความเย็น</h2>
                 <p></p>
                 <p><strong>ราคา: 149 บาท</strong></p>
-                <button onclick="addToCart('แก้วเก็บความเย็น', 'logo.png/LINE_ALBUM_image_250129_1.jpg', 149); showToast('เพิ่ม GEN9 STORY ลงตะกร้า!')">เพิ่มลงตะกร้า</button>
-            </div>
-
-            <div class="product-card">
-                <img src="logo.png/LINE_ALBUM_image_250129_2.jpg" alt="GEN10 STYLE">
-                <h2>แก้วเก็บความเย็น</h2>
-                <p></p>
-                <p><strong>ราคา: 149 บาท</strong></p>
-                <button onclick="addToCart('แก้วเก็บความเย็น', 'logo.png/LINE_ALBUM_image_250129_2.jpg', 149)">เพิ่มลงตะกร้า</button>
-            </div>
-
-            <div class="product-card">
-                <img src="logo.png/LINE_ALBUM_image_250129_3.jpg" alt="GEN11 TREND">
-                <h2>แก้วเก็บความเย็น</h2>
-                <p></p>
-                <p><strong>ราคา: 149 บาท</strong></p>
-                <button onclick="addToCart('แก้วเก็บความเย็น', 'logo.png/LINE_ALBUM_image_250129_3.jpg', 149)">เพิ่มลงตะกร้า</button>
-            </div>
-
-            <div class="product-card">
-                <img src="logo.png/LINE_ALBUM_image_250129_4.jpg" alt="GEN13 CLASSIC">
-                <h2>แก้วเก็บความเย็น</h2>
-                <p></p>
-                <p><strong>ราคา: 149 บาท</strong></p>
-                <button onclick="addToCart('แก้วเก็บความเย็น', 'logo.png/LINE_ALBUM_image_250129_4.jpg', 149)">เพิ่มลงตะกร้า</button>
-            </div>
-            <div class="product-card">
-                <img src="logo.png/1.1.jpg" alt="GEN13 CLASSIC">
-                <h2>แก้วเซรามิค</h2>
-                <p></p>
-                <p><strong>ราคา: 99 บาท</strong></p>
-                <button onclick="addToCart('แก้วเซรามิค', 'logo.png/1.1.jpg', 99)">เพิ่มลงตะกร้า</button>
-            </div>
-            <div class="product-card">
-  <img src="logo.png/1.2.jpg" alt="GEN13 CLASSIC">
-  <h2>แก้วเซรามิค</h2>
-  <p></p>
-  <p><strong>ราคา: 99 บาท</strong></p>
-  <button onclick="addToCart('แก้วเซรามิค', 'logo.png/1.2.jpg', 99)">เพิ่มลงตะกร้า</button>
-</div>
-<div class="product-card">
-  <img src="logo.png/1.3.jpg" alt="GEN13 CLASSIC">
-  <h2>แก้วเซรามิค</h2>
-  <p></p>
-  <p><strong>ราคา: 99 บาท</strong></p>
-  <button onclick="addToCart('แก้วเซรามิค', 'logo.png/1.3.jpg', 99)">เพิ่มลงตะกร้า</button>
-</div>
-<div class="product-card">
-  <img src="logo.png/2.1.jpg" alt="GEN13 CLASSIC">
-  <h2>กระเป๋าผ้า</h2>
-  <p></p>
-  <p><strong>ราคา: 159 บาท</strong></p>
-  <button onclick="addToCart('กระเป๋าผ้า', 'logo.png/2.1.jpg', 159)">เพิ่มลงตะกร้า</button>
-</div>
-<div class="product-card">
-  <img src="logo.png/2.2.jpg" alt="GEN13 CLASSIC">
-  <h2>กระเป๋าผ้า</h2>
-  <p></p>
-  <p><strong>ราคา: 159 บาท</strong></p>
-  <button onclick="addToCart('กระเป๋าผ้า', 'logo.png/2.2.jpg', 159)">เพิ่มลงตะกร้า</button>
-</div>
-
-<div class="product-card">
-  <img src="logo.png/3.2.jpg" alt="GEN13 CLASSIC">
-  <h2>แคปหมู</h2>
-  <p></p>
-  <p><strong>ราคา: 20 บาท</strong></p>
-  <button onclick="addToCart('แคปหมู', 'logo.png/3.2.jpg', 20)">เพิ่มลงตะกร้า</button>
-</div>
-<div class="product-card">
-  <img src="logo.png/3.3.jpg" alt="GEN13 CLASSIC">
-  <h2>แคปหมู</h2>
-  <p></p>
-  <p><strong>ราคา: 20 บาท</strong></p>
-  <button onclick="addToCart('แคปหมู', 'logo.png/3.3.jpg', 20)">เพิ่มลงตะกร้า</button>
-</div>
-<div class="product-card">
-  <img src="logo.png/3.4.jpg" alt="GEN13 CLASSIC">
-  <h2>แคปหมู</h2>
-  <p></p>
-  <p><strong>ราคา: 20 บาท</strong></p>
-  <button onclick="addToCart('แคปหมู', 'logo.png/3.4.jpg', 20)">เพิ่มลงตะกร้า</button>
-</div>
-        </section>
-      
-    </main>
-        <script>
-function searchProducts() {
-    const input = document.getElementById("searchInput").value.toLowerCase();
-    const products = document.querySelectorAll(".product-card");
-    const productList = document.querySelector(".product-list");
-
-    let hasResult = false;
-
-    products.forEach(product => {
-        const productName = product.querySelector("h2").textContent.toLowerCase();
-        const productDescription = product.querySelector("p").textContent.toLowerCase();
-
-        if (productName.includes(input) || productDescription.includes(input)) {
-            product.style.display = "block";  
-            hasResult = true;
-        } else {
-            product.style.display = "none";  
-        }
-    });
-
-    // หากมีสินค้าตรงกับคำค้นหา ให้ใช้ flex เพื่อจัดเรียง
-    if (hasResult) {
-        productList.style.display = "flex";
-    } else {
-        productList.style.display = "block";
-    }
-}
-</script>
-  <script src="js/cart.js" defer></script>  
-    <script src="js/cuth.js" ></script>  
-
-</body>
-</html>
+                <button onclick="addToCar
