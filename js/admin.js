@@ -112,6 +112,7 @@ function renderOrders() {
       <p><strong>📦 รายการสินค้า:</strong></p>
       <div class="order-products">${productHTML}</div>
       <p><strong>💰 ราคารวม:</strong> ${order.totalPrice} บาท</p>
+         <p><strong>💳 ช่องทางการชำระเงิน:</strong> ${order.paymentMethod} </p> 
       <p><strong>📦 สถานะ:</strong> <span style="color: ${order.status === "ยืนยันแล้ว" || order.status === "รับสินค้าแล้ว" ? "green" : "red"};">${order.status}</span></p>
       <div class="button-group">
           <button class="confirm" onclick="confirmOrder('${orderId}')">✅ สินค้ากำลังจัดส่ง</button>
