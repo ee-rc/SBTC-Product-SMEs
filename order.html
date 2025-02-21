@@ -23,15 +23,241 @@
       <label>👤 ชื่อ-นามสกุล: <input type="text" id="name" required></label>
       <label>📍 ที่อยู่จัดส่ง: <input type="text" id="address" required></label>
       <label>📞 เบอร์โทรศัพท์: <input type="tel" id="phone" required pattern="[0-9]{10}" placeholder="กรอกเบอร์โทร 10 หลัก"></label>
-     <label for="paymentMethod">💳เลือกวิธีชำระเงิน:</label>
+      <div>
+<div>
+  <label for="paymentMethod">💳เลือกวิธีชำระเงิน:</label>
   <select id="paymentMethod">
     <option value="เก็บเงินปลายทาง">เก็บเงินปลายทาง</option>
   </select>
-  </div>
+</div>
+
       <label>📝 หมายเหตุ (ถ้ามี): <textarea id="note" placeholder="ใส่รายละเอียดเพิ่มเติม..."></textarea></label>
       <buttrr type="buttrr" id="placeOrder">✅ ยืนยันคำสั่งซื้อ</buttrr>
     </form>
-    <p id="loginPrompt" style="color:red; display:none;">กรุณาล็อกอินก่อนทำการสั่งซื้อ</p>
+    <p id="loginPrompt" style="color:red; display:non
+
+/* กลาง */
+.center {
+  text-align: center;
+}
+
+/* เลือก */
+.navbar {
+    background-color: #333;
+    padding: 10px 20px;
+}
+.navbar .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.navbar .logo {
+    color: white;
+    text-decoration: none;
+    font-size: 20px;
+    font-weight: bold;
+}
+.nav-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+}
+.nav-links li {
+    margin-left: 20px;
+}
+.nav-links a {
+    color: white;
+    text-decoration: none;
+    font-size: 16px;
+}
+.nav-links a:hover {
+    text-decoration: underline;
+}
+/*ค้นหา*/
+.search-container {
+    text-align: center;
+    margin: 20px 0;
+}
+
+#searchInput {
+    width: 80%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+/*แชท*/
+.chat-container {
+    width: 100%;
+    max-width: 400px;
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    border: 1px solid #ccc;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+}
+
+.chat-box {
+    max-height: 300px;
+    overflow-y: auto;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.chat-message {
+    background: #f1f1f1;
+    padding: 8px;
+    border-radius: 5px;
+    margin: 5px 0;
+}
+
+.chat-input {
+    display: flex;
+    padding: 10px;
+}
+
+.chat-input input {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.chat-input button {
+    padding: 8px 15px;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.product-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center; /* จัดให้สินค้าอยู่ตรงกลาง */
+    align-items: flex-start;
+    gap: 20px; /* เว้นระยะห่างระหว่างสินค้า */
+}
+
+.product-card {
+    width: 200px;
+    padding: 10px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.product-card img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 5px;
+}
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f8f8f8;
+}
+
+/* ปุ่มเมนู */
+.menu-button {
+    font-size: 30px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 15px;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+}
+
+/* เมนูด้านข้าง */
+.menu {
+    position: fixed;
+    top: 0;
+    left: -250px;
+    width: 250px;
+    height: 100%;
+    padding-top: 60px;
+    transition: 0.3s;
+}
+
+.close-button {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 30px;
+    color: white;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.menu a {
+    display: block;
+    padding: 15px;
+    text-decoration: none;
+    color: white;
+    font-size: 18px;
+    text-align: center;
+}
+
+.menu a:hover {
+    background: #575757;
+}
+
+/* รายการสินค้า */
+.product-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+    padding: 20px;
+}
+
+.product-card {
+    background: white;
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 250px;
+}
+
+.product-card img {
+    width: 100%;
+    border-radius: 10px;
+}
+
+.product-card button {
+    background: #007BFF;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.product-card button:hover {
+    background: #0056b3;
+}
+
+/* หัวข้อ */
+.main-header {
+    text-align: center;
+    color: white;
+    padding: 15px;
+}/* ปรับปรุงเมนู */
+
+
+
+ e;">กรุณาล็อกอินก่อนทำการสั่งซื้อ</p>
     
   </div>
 </body>
