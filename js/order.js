@@ -94,7 +94,7 @@ function loadProductList() {
     productListHTML += `
       <div>
         <img src="${item.image}" width="50" alt="${item.name}">
-        <b>${item.name}</b> - ${item.price} บาท
+        <b>${item.name}</b>  ${item.price} บาท
         <button onclick="increaseQuantity(${index})">+</button>
         <span id="quantity-${index}">${item.quantity}</span>
         <button onclick="decreaseQuantity(${index})">-</button>
