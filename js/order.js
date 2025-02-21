@@ -116,6 +116,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // เมื่อคลิกปุ่ม "สั่งซื้อ"
+// เมื่อคลิกปุ่ม "ยืนยันคำสั่งซื้อ"
 const placeOrderBtn = document.getElementById("placeOrder");
 
 if (placeOrderBtn) {
@@ -124,32 +125,45 @@ if (placeOrderBtn) {
       alert("กรุณาล็อกอินก่อนทำการสั่งซื้อ");
       return;
     }
-    
+
     const name = document.getElementById("name").value.trim();
     const address = document.getElementById("address").value.trim();
     const phone = document.getElementById("phone").value.trim();
     const note = document.getElementById("note").value.trim();
-    
+    const selectedPaymentMethod = document.getElementById("paymentMethod").value;
+
+    if (!selectedPaymentMethod) {
+      alert("กรุณาเลือกวิธีชำระเงิน");
+      return;
+    }
+
     const cart = getCart();
     if (cart.length === 0) {
       alert("ตะกร้าว่าง!");
       return;
     }
-    
+
     const totalPrice = cart.reduce((total, item) => total + item.price * item.quantity, 0);
-    
+
     if (!name || !address || !phone) {
       alert("กรุณากรอกข้อมูลให้ครบถ้วน (รวมถึงเบอร์โทรศัพท์)");
       return;
     }
-    
+
+    const phonePattern = /^0\d{9}$/;
+    if (!phonePattern.test(phone)) {
+      alert("กรุณากรอกเบอร์โทรศัพท์ให้ถูกต้อง (10 หลัก และขึ้นต้นด้วย 0)");
+      return;
+    }
+
     try {
-      const docRef = await addDoc(collection(db, "orders"), {
+      await addDoc(collection(db, "orders"), {
         name,
         address,
-        phone, // เพิ่มเบอร์โทรศัพท์ลง Firestore
+        phone,
         email: currentUser.email,
         note,
+        paymentMethod: selectedPaymentMethod, // 🏦 บันทึกช่องทางการชำระเงิน
         products: cart.map(item => ({
           name: item.name,
           price: item.price,
@@ -161,8 +175,11 @@ if (placeOrderBtn) {
         userId: currentUser.uid,
         createdAt: new Date()
       });
-      
+
+      // เคลียร์ตะกร้าหลังสั่งซื้อ
       localStorage.removeItem("cart");
+
+      // นำทางไปยังหน้ารายการคำสั่งซื้อ
       window.location.href = "Order list.html";
     } catch (error) {
       console.error("เกิดข้อผิดพลาด:", error);
@@ -170,6 +187,7 @@ if (placeOrderBtn) {
     }
   });
 }
+
 
 // ฟังก์ชันเข้าสู่ระบบ
 const loginBtn = document.getElementById("loginBtn");
