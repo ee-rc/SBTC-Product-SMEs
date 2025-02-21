@@ -126,8 +126,8 @@ function renderOrders() {
 
 // อัปเดตคำสั่งซื้อให้เป็น "ยืนยันแล้ว"
 window.confirmOrder = async (orderId) => {
-  await updateDoc(doc(db, "orders", orderId), { status: "กำลังจัดส่ง" });
-  alert("✅ สินค้ากำลังจัดส่ง");
+  await updateDoc(doc(db, "orders", orderId), { status: "ร้านค้ายืนยันคำสั่งซื้อของคุณแล้ว" });
+  alert("✅ ยืนยัน");
 };
 
 // ลบคำสั่งซื้อ
