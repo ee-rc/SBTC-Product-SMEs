@@ -169,3 +169,10 @@ button:hover {
   border-radius: 5px;
   margin-top: 10px;
 }
+input, select, textarea {
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
