@@ -61,6 +61,7 @@ function loadOrders(user) {
   <p><strong>📍 ที่อยู่:</strong> ${order.address}</p>  
   <p><strong>📞 เบอร์โทร:</strong> ${order.phone}</p>  
   <p><strong>💰 ราคารวม:</strong> ${order.totalPrice} บาท</p>  
+     <p><strong>💳 ช่องทางการชำระเงิน:</strong> ${order.paymentMethod} </p> 
   <p><strong>📝 หมายเหตุ:</strong> ${order.note || "ไม่มี"}</p>  
   <p><strong>📦 สถานะ:</strong> <span class="order-status">${order.status}</span></p>  
 `;
