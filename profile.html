@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>โปรไฟล์ผู้ใช้</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f8f8;
+            margin: 0;
+            padding: 0;
+        }
+        .header {
+            background: linear-gradient(45deg, #ff4081, #ff80ab);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+        }
+        .profile {
+            display: flex;
+            align-items: center;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            margin: -30px auto 20px;
+            width: 90%;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .profile img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            margin-right: 15px;
+        }
+        .profile-info h2 {
+            margin: 0;
+            font-size: 18px;
+        }
+        .profile-info p {
+            margin: 2px 0;
+            color: #666;
+            font-size: 14px;
+        }
+        .section {
+            background: white;
+            margin: 10px auto;
+            padding: 15px;
+            border-radius: 10px;
+            width: 90%;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .section h3 {
+            font-size: 16px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        .btn {
+            display: block;
+            text-align: center;
+            padding: 10px;
+            border-radius: 5px;
+            background: #ff4081;
+            color: white;
+            text-decoration: none;
+            margin-top: 10px;
+        }
+        .icons {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 10px;
+        }
+        .icon {
+            text-align: center;
+            font-size: 14px;
+            color: #ff4081;
+        }
+        .icon i {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+        .bottom-menu {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background: white;
+            padding: 10px 0;
+            display: flex;
+            justify-content: space-around;
+            border-top: 1px solid #ddd;
+        }
+        .bottom-menu a {
+            text-align: center;
+            font-size: 12px;
+            color: #666;
+            text-decoration: none;
+        }
+        .bottom-menu i {
+            display: block;
+            font-size: 20px;
+            margin-bottom: 5px;
+        }
+        .active {
+            color: #ff4081;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h2>โปรไฟล์ของฉัน</h2>
+    </div>
+
+    <div class="profile">
+        <img src="https://via.placeholder.com/60" alt="User Profile">
+        <div class="profile-info">
+            <h2 id="username">ชื่อผู้ใช้</h2>
+            <p id="email">อีเมล</p>
+        </div>
+    </div>
+
+    <div class="section">
+        <h3>รายการสั่งซื้อของฉัน</h3>
+        <div class="icons">
+            <div class="icon">
+                <i class="fas fa-wallet"></i>
+                <p>ที่ต้องชำระ</p>
+            </div>
+            <div class="icon">
+                <i class="fas fa-truck"></i>
+                <p>ระหว่างขนส่ง</p>
+            </div>
+            <div class="icon">
+                <i class="fas fa-comment-alt"></i>
+                <p>ที่ต้องรีวิว</p>
+            </div>
+            <div class="icon">
+                <i class="fas fa-undo"></i>
+                <p>คืนสินค้า</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h3>ตั้งค่าบัญชี</h3>
+        <a href="edit-profile.html" class="btn">แก้ไขข้อมูล</a>
+        <a href="#" class="btn" style="background: #ff1744;">ออกจากระบบ</a>
+    </div>
+
+    <div class="bottom-menu">
+        <a href="#"><i class="fas fa-home"></i> หน้าหลัก</a>
+        <a href="#"><i class="fas fa-heart"></i> Like</a>
+        <a href="#"><i class="fas fa-comment-alt"></i> ข้อความ</a>
+        <a href="cart.html"><i class="fas fa-shopping-cart"></i> ตะกร้า</a>
+        <a href="#" class="active"><i class="fas fa-user"></i> บัญชี</a>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBTcik7Ldm_Bv_nwY8jq0xdhCx6LwUhu8g",
+            authDomain: "sdtc-b8863.firebaseapp.com",
+            projectId: "sdtc-b8863",
+            storageBucket: "sdtc-b8863.appspot.com",
+            messagingSenderId: "1077154268954",
+            appId: "1:1077154268954:web:a385080364aa9759994ea3"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth();
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                const userRef = doc(db, "users", user.uid);
+                const userSnap = await getDoc(userRef);
+
+                if (userSnap.exists()) {
+                    document.getElementById("username").textContent = userSnap.data().username || "ไม่ระบุชื่อ";
+                    document.getElementById("email").textContent = userSnap.data().email || "ไม่มีอีเมล";
+                }
+            }
+        });
+
+        document.querySelector(".btn[style='background: #ff1744;']").addEventListener("click", async () => {
+            await signOut(auth);
+            alert("ออกจากระบบเรียบร้อย!");
+            window.location.reload();
+        });
+    </script>
+</body>
+</html>
