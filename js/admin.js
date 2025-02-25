@@ -17,18 +17,9 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const orderList = document.getElementById("orderList");
 
-// ตัวแปรเก็บข้อมูลคำสั่งซื้อทั้งหมด
 let ordersData = [];
+let filters = { date: "", time: "", category: "", status: "" };
 
-// ตัวแปรเก็บ filter ที่เลือก
-let filters = {
-  date: "",
-  time: "",
-  category: "",
-  status: ""
-};
-
-// โหลดข้อมูลคำสั่งซื้อและเก็บใน ordersData จากนั้นเรียก renderOrders()
 function loadOrders() {
   onSnapshot(collection(db, "orders"), (snapshot) => {
     ordersData = [];
@@ -36,43 +27,31 @@ function loadOrders() {
       ordersData.push({ id: docSnap.id, ...docSnap.data() });
     });
 
-    // เรียงคำสั่งซื้อจากใหม่ไปเก่า
     ordersData.sort((a, b) => b.createdAt.seconds - a.createdAt.seconds);
-
     renderOrders();
   });
 }
 
-// ฟังก์ชันกรองคำสั่งซื้อที่ได้จากฐานข้อมูลตามค่าที่ผู้ใช้เลือก
 function applyOrderFilters(order) {
-  // ตรวจสอบวันที่ (เปรียบเทียบในรูปแบบ YYYY-MM-DD)
   if (filters.date && order.createdAt) {
-    const orderDate = new Date(order.createdAt.seconds * 1000)
-      .toISOString()
-      .slice(0, 10);
+    const orderDate = new Date(order.createdAt.seconds * 1000).toISOString().slice(0, 10);
     if (orderDate !== filters.date) return false;
   }
-  // ตรวจสอบเวลา (เปรียบเทียบในรูปแบบ HH:MM)
   if (filters.time && order.createdAt) {
-    const orderTime = new Date(order.createdAt.seconds * 1000)
-      .toTimeString()
-      .slice(0, 5);
+    const orderTime = new Date(order.createdAt.seconds * 1000).toTimeString().slice(0, 5);
     if (orderTime !== filters.time) return false;
   }
-  // ตรวจสอบประเภทสินค้า (สมมติ order.products มี property category)
   if (filters.category) {
     if (!order.products || !order.products.some(item => item.category === filters.category)) {
       return false;
     }
   }
-  // ตรวจสอบสถานะ (รวมทั้ง "รับสินค้าแล้ว" ด้วย)
   if (filters.status && order.status !== filters.status) {
     return false;
   }
   return true;
 }
 
-// ฟังก์ชันแสดงคำสั่งซื้อ โดยจะเรียก applyOrderFilters ในการกรองข้อมูล
 function renderOrders() {
   orderList.innerHTML = "";
   ordersData.forEach((order) => {
@@ -82,6 +61,8 @@ function renderOrders() {
     const createdAt = order.createdAt 
       ? new Date(order.createdAt.seconds * 1000).toLocaleString() 
       : "ไม่ระบุ";
+
+    let trackingNumber = order.trackingNumber || "";
 
     let productHTML = "";
     if (order.products && order.products.length > 0) {
@@ -98,9 +79,6 @@ function renderOrders() {
 
     const orderItem = document.createElement("div");
     orderItem.classList.add("order-slip");
-    if (order.status === "ยืนยันแล้ว" || order.status === "รับสินค้าแล้ว") {
-      orderItem.style.background = "#d4edda";
-    }
 
     orderItem.innerHTML = `
       <p><strong>🆔 คำสั่งซื้อ:</strong> ${orderId}</p>
@@ -112,8 +90,13 @@ function renderOrders() {
       <p><strong>📦 รายการสินค้า:</strong></p>
       <div class="order-products">${productHTML}</div>
       <p><strong>💰 ราคารวม:</strong> ${order.totalPrice} บาท</p>
-         <p><strong>💳 ช่องทางการชำระเงิน:</strong> ${order.paymentMethod} </p> 
+      <p><strong>💳 ช่องทางการชำระเงิน:</strong> ${order.paymentMethod} </p> 
       <p><strong>📦 สถานะ:</strong> <span style="color: ${order.status === "ยืนยันแล้ว" || order.status === "รับสินค้าแล้ว" ? "green" : "red"};">${order.status}</span></p>
+      
+      <label for="tracking-${orderId}"><strong>🚚 หมายเลขติดตาม:</strong></label>
+      <input type="text" id="tracking-${orderId}" value="${trackingNumber}" placeholder="กรอกหมายเลขติดตาม">
+      <button class="update-tracking" onclick="updateTrackingNumber('${orderId}')">💾 บันทึก</button>
+
       <div class="button-group">
           <button class="confirm" onclick="confirmOrder('${orderId}')">✅ ยืนยัน</button>
           <button class="confirm" onclick="confirmOrder1('${orderId}')">✅ จัดส่ง</button>
@@ -126,21 +109,39 @@ function renderOrders() {
   });
 }
 
-// อัปเดตคำสั่งซื้อให้เป็น "ยืนยันแล้ว"
+window.updateTrackingNumber = async (orderId) => {
+  const trackingInput = document.getElementById(`tracking-${orderId}`);
+  const trackingNumber = trackingInput.value.trim();
+
+  if (trackingNumber === "") {
+    alert("⚠️ กรุณากรอกหมายเลขติดตามพัสดุ!");
+    return;
+  }
+
+  try {
+    await updateDoc(doc(db, "orders", orderId), { trackingNumber });
+    alert("✅ หมายเลขติดตามถูกบันทึกแล้ว!");
+  } catch (error) {
+    console.error("❌ เกิดข้อผิดพลาดในการบันทึกหมายเลขติดตาม:", error);
+    alert("❌ ไม่สามารถบันทึกหมายเลขติดตามได้!");
+  }
+};
+
 window.confirmOrder = async (orderId) => {
   await updateDoc(doc(db, "orders", orderId), { status: "ร้านค้ายืนยันคำสั่งซื้อของคุณแล้ว" });
   alert("✅ ยืนยัน");
 };
+
 window.confirmOrder1 = async (orderId) => {
   await updateDoc(doc(db, "orders", orderId), { status: "สินค้าอยู่ระหว่างการจัดส่ง" });
   alert("✅ จัดส่ง");
 };
+
 window.confirmOrder2 = async (orderId) => {
   await updateDoc(doc(db, "orders", orderId), { status: "จัดส่งเสร็จสิ้น" });
   alert("✅ เสร็จ");
 };
 
-// ลบคำสั่งซื้อ
 window.cancelOrder = async (orderId) => {
   const confirmDelete = confirm("⚠️ คุณแน่ใจหรือไม่ว่าต้องการยกเลิกคำสั่งซื้อนี้?");
   if (confirmDelete) {
@@ -149,7 +150,6 @@ window.cancelOrder = async (orderId) => {
   }
 };
 
-// อ่านค่าจาก Filter UI และอัปเดตตัวแปร filters จากนั้นรีเรนเดอร์ข้อมูลคำสั่งซื้อ
 function applyFilters() {
   filters.date = document.getElementById("filterDate").value;
   filters.time = document.getElementById("filterTime").value;
@@ -158,20 +158,13 @@ function applyFilters() {
   renderOrders();
 }
 
-// ล้างค่า Filter ทั้งหมด แล้วรีเรนเดอร์ข้อมูลใหม่
 function clearFilters() {
   document.getElementById("filterDate").value = "";
   document.getElementById("filterTime").value = "";
   document.getElementById("filterCategory").value = "";
   document.getElementById("filterStatus").value = "";
-  filters = {
-    date: "",
-    time: "",
-    category: "",
-    status: ""
-  };
+  filters = { date: "", time: "", category: "", status: "" };
   renderOrders();
 }
 
-// เรียกใช้งานเพื่อโหลดข้อมูลคำสั่งซื้อเมื่อเปิดหน้าเว็บ
 loadOrders();
