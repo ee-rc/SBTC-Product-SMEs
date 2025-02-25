@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>แก้ไขโปรไฟล์</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f8f8;
+            margin: 0;
+            padding: 0;
+        }
+        .header {
+            background: linear-gradient(45deg, #ff4081, #ff80ab);
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-size: 18px;
+            position: relative;
+        }
+        .header .back-btn {
+            position: absolute;
+            left: 15px;
+            top: 15px;
+            font-size: 18px;
+            color: white;
+            text-decoration: none;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px auto;
+            width: 90%;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        label {
+            display: block;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        .btn {
+            display: block;
+            text-align: center;
+            padding: 12px;
+            border-radius: 5px;
+            background: #ff4081;
+            color: white;
+            text-decoration: none;
+            margin-top: 20px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="profile.html" class="back-btn"><i class="fas fa-arrow-left"></i></a>
+        แก้ไขโปรไฟล์
+    </div>
+
+    <div class="container">
+        <label>ชื่อผู้ใช้</label>
+        <input type="text" id="username">
+
+        <label>รหัสผ่านเก่า</label>
+        <input type="password" id="oldPassword">
+
+        <label>รหัสผ่านใหม่</label>
+        <input type="password" id="newPassword">
+
+<a class="btn-secondary" id="forgotPasswordBtn">ลืมรหัสผ่าน?</a>
+
+        <button class="btn" id="saveBtn">บันทึก</button>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
+        import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+        import { getAuth, onAuthStateChanged, updatePassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBTcik7Ldm_Bv_nwY8jq0xdhCx6LwUhu8g",
+            authDomain: "sdtc-b8863.firebaseapp.com",
+            projectId: "sdtc-b8863",
+            storageBucket: "sdtc-b8863.appspot.com",
+            messagingSenderId: "1077154268954",
+            appId: "1:1077154268954:web:a385080364aa9759994ea3"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth();
+
+        let currentUserEmail = "";
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentUserEmail = user.email;
+                const userRef = doc(db, "users", user.uid);
+                const userSnap = await getDoc(userRef);
+                if (userSnap.exists()) {
+                    document.getElementById("username").value = userSnap.data().username || "";
+                }
+            }
+        });
+
+        document.getElementById("saveBtn").addEventListener("click", async () => {
+            const user = auth.currentUser;
+            if (user) {
+                const oldPassword = document.getElementById("oldPassword").value;
+                const newPassword = document.getElementById("newPassword").value;
+                const newUsername = document.getElementById("username").value;
+                const userRef = doc(db, "users", user.uid);
+
+                try {
+                    // ยืนยันรหัสผ่านเก่าก่อน
+                    await signInWithEmailAndPassword(auth, currentUserEmail, oldPassword);
+
+                    // อัปเดตชื่อผู้ใช้
+                    await updateDoc(userRef, { username: newUsername });
+
+                    // เปลี่ยนรหัสผ่านใหม่
+                    if (newPassword.length >= 6) {
+                        await updatePassword(user, newPassword);
+                        alert("บันทึกข้อมูลและเปลี่ยนรหัสผ่านสำเร็จ!");
+                    } else {
+                        alert("บันทึกข้อมูลสำเร็จ!");
+                    }
+
+                    window.location.href = "profile.html";
+                } catch (error) {
+                    alert("รหัสผ่านเก่าไม่ถูกต้อง หรือมีข้อผิดพลาด: " + error.message);
+                }
+            }
+        })
+        import { sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-auth.js";
+
+document.getElementById("forgotPasswordBtn").addEventListener("click", async () => {
+    if (currentUserEmail) {
+        try {
+            await sendPasswordResetEmail(auth, currentUserEmail);
+            alert("เราได้ส่งลิงก์รีเซ็ตรหัสผ่านไปที่อีเมลของคุณแล้ว");
+        } catch (error) {
+            alert("เกิดข้อผิดพลาด: " + error.message);
+        }
+    } else {
+        alert("กรุณาล็อกอินก่อนเพื่อรีเซ็ตรหัสผ่าน");
+    }
+});;
+    </script>
+</body>
+</html>
