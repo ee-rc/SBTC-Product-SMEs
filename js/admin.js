@@ -116,8 +116,8 @@ function renderOrders() {
       <p><strong>📦 สถานะ:</strong> <span style="color: ${order.status === "ยืนยันแล้ว" || order.status === "รับสินค้าแล้ว" ? "green" : "red"};">${order.status}</span></p>
       <div class="button-group">
           <button class="confirm" onclick="confirmOrder('${orderId}')">✅ ยืนยัน</button>
-          <button class="confirm" onclick="confirmOrder('${orderId}')">✅ จัดส่ง</button>
-          <button class="confirm" onclick="confirmOrder('${orderId}')">✅ เสร็จสิ้น</button>
+          <button class="confirm1" onclick="confirmOrder('${orderId}')">✅ จัดส่ง</button>
+          <button class="confirm2" onclick="confirmOrder('${orderId}')">✅ เสร็จสิ้น</button>
           <button class="cancel" onclick="cancelOrder('${orderId}')">❌ ยกเลิก</button>
       </div>
     `;
@@ -131,11 +131,11 @@ window.confirmOrder = async (orderId) => {
   await updateDoc(doc(db, "orders", orderId), { status: "ร้านค้ายืนยันคำสั่งซื้อของคุณแล้ว" });
   alert("✅ ยืนยัน");
 };
-window.confirmOrder = async (orderId) => {
+window.confirmOrder1 = async (orderId) => {
   await updateDoc(doc(db, "orders", orderId), { status: "สินค้าอยู่ระหว่างการจัดส่ง" });
   alert("✅ จัดส่ง");
 };
-window.confirmOrder = async (orderId) => {
+window.confirmOrder2 = async (orderId) => {
   await updateDoc(doc(db, "orders", orderId), { status: "จัดส่งเสร็จสิ้น" });
   alert("✅ เสร็จ");
 };
