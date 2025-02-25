@@ -231,10 +231,14 @@
         });
 
         document.querySelector(".btn[style='background: #ff1744;']").addEventListener("click", async () => {
-            await signOut(auth);
-            alert("ออกจากระบบเรียบร้อย!");
-            window.location.reload();
-        });
+    try {
+        await signOut(auth);
+        alert("ออกจากระบบเรียบร้อย!");
+        window.location.href = "index.html"; // ไปที่หน้า Login หลังจากออกจากระบบ
+    } catch (error) {
+        console.error("เกิดข้อผิดพลาดในการออกจากระบบ:", error);
+    }
+});
     </script>
 </body>
 </html>
