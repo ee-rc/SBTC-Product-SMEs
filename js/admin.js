@@ -116,8 +116,8 @@ function renderOrders() {
       <p><strong>📦 สถานะ:</strong> <span style="color: ${order.status === "ยืนยันแล้ว" || order.status === "รับสินค้าแล้ว" ? "green" : "red"};">${order.status}</span></p>
       <div class="button-group">
           <button class="confirm" onclick="confirmOrder('${orderId}')">✅ ยืนยัน</button>
-          <button class="confirm1" onclick="confirmOrder('${orderId}')">✅ จัดส่ง</button>
-          <button class="confirm2" onclick="confirmOrder('${orderId}')">✅ เสร็จสิ้น</button>
+          <button class="confirm" onclick="confirmOrder1('${orderId}')">✅ จัดส่ง</button>
+          <button class="confirm" onclick="confirmOrder2('${orderId}')">✅ เสร็จสิ้น</button>
           <button class="cancel" onclick="cancelOrder('${orderId}')">❌ ยกเลิก</button>
       </div>
     `;
