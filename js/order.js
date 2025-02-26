@@ -51,17 +51,27 @@ function saveCart(cart) {
   localStorage.setItem("cart", JSON.stringify(cart));
 }
 
-// คำนวณรวมราคา
+// คำนวณรวมราคา + ค่าจัดส่ง
 function updateTotalPrice() {
   const cart = getCart();
   let totalPrice = cart.reduce((total, item) => total + item.price * item.quantity, 0);
   
-  if (document.getElementById("totalPrice")) {
-    document.getElementById("totalPrice").innerText = totalPrice;
+  // ตรวจสอบค่าจัดส่งจาก dropdown
+  const shippingMethod = document.getElementById("shippingMethod")?.value;
+  let shippingFee = 0;
+  
+  if (shippingMethod === "cod") {
+    shippingFee = 50; // ค่าส่งปลายทาง
+  } else if (shippingMethod === "pickup") {
+    shippingFee = 0; // มารับเองไม่มีค่าส่ง
   }
+  
+  // รวมยอดทั้งหมด
+  const finalTotal = totalPrice + shippingFee;
+  document.getElementById("totalPrice").innerText = finalTotal.toLocaleString() + " บาท";
 }
 
-// ฟังก์ชันเพิ่มจำนวนสินค้า
+// ฟังก์ชันเพิ่มสินค้า
 window.increaseQuantity = function(index) {
   let cart = getCart();
   if (cart[index]) {
@@ -71,14 +81,12 @@ window.increaseQuantity = function(index) {
   }
 };
 
-// ฟังก์ชันลดจำนวนสินค้า (แก้ไขให้เหลือขั้นต่ำ 1 ชิ้น)
+// ฟังก์ชันลดสินค้า
 window.decreaseQuantity = function(index) {
   let cart = getCart();
   if (cart[index]) {
     if (cart[index].quantity > 1) {
       cart[index].quantity -= 1;
-    } else {
-      cart[index].quantity = 1; // ป้องกันไม่ให้สินค้าหายไป
     }
     saveCart(cart);
     loadProductList();
@@ -109,14 +117,15 @@ function loadProductList() {
   updateTotalPrice();
 }
 
-// เมื่อโหลดหน้าฟอร์ม
+// อัปเดตราคาเมื่อเลือกวิธีจัดส่ง
+document.getElementById("shippingMethod")?.addEventListener("change", updateTotalPrice);
+
+// เมื่อโหลดหน้า
 document.addEventListener("DOMContentLoaded", () => {
-  updateTotalPrice();
   loadProductList();
 });
 
-// เมื่อคลิกปุ่ม "สั่งซื้อ"
-// เมื่อคลิกปุ่ม "ยืนยันคำสั่งซื้อ"
+// เมื่อกดปุ่ม "ยืนยันคำสั่งซื้อ"
 const placeOrderBtn = document.getElementById("placeOrder");
 
 if (placeOrderBtn) {
@@ -125,86 +134,64 @@ if (placeOrderBtn) {
       alert("กรุณาล็อกอินก่อนทำการสั่งซื้อ");
       return;
     }
-
+    
     const name = document.getElementById("name").value.trim();
     const address = document.getElementById("address").value.trim();
     const phone = document.getElementById("phone").value.trim();
     const note = document.getElementById("note").value.trim();
-    const selectedPaymentMethod = document.getElementById("paymentMethod").value;
-
+    const selectedPaymentMethod = document.getElementById("shippingMethod").value;
+    
     if (!selectedPaymentMethod) {
-      alert("กรุณาเลือกวิธีชำระเงิน");
+      alert("กรุณาเลือกวิธีจัดส่ง");
       return;
     }
-
+    
     const cart = getCart();
     if (cart.length === 0) {
       alert("ตะกร้าว่าง!");
       return;
     }
-
+    
     const totalPrice = cart.reduce((total, item) => total + item.price * item.quantity, 0);
-
+    let shippingFee = selectedPaymentMethod === "cod" ? 50 : 0; // เพิ่มค่าจัดส่ง
+    const finalTotal = totalPrice + shippingFee;
+    
     if (!name || !address || !phone) {
-      alert("กรุณากรอกข้อมูลให้ครบถ้วน (รวมถึงเบอร์โทรศัพท์)");
+      alert("กรุณากรอกข้อมูลให้ครบถ้วน");
       return;
     }
-
+    
     const phonePattern = /^0\d{9}$/;
     if (!phonePattern.test(phone)) {
-      alert("กรุณากรอกเบอร์โทรศัพท์ให้ถูกต้อง (10 หลัก และขึ้นต้นด้วย 0)");
+      alert("กรุณากรอกเบอร์โทรศัพท์ให้ถูกต้อง (10 หลัก)");
       return;
     }
-
-    try {
-      await addDoc(collection(db, "orders"), {
-        name,
-        address,
-        phone,
-        email: currentUser.email,
-        note,
-        paymentMethod: selectedPaymentMethod, // 🏦 บันทึกช่องทางการชำระเงิน
-        products: cart.map(item => ({
-          name: item.name,
-          price: item.price,
-          quantity: item.quantity,
-          image: item.image
-        })),
-        totalPrice,
-        status: "รอยืนยัน",
-        userId: currentUser.uid,
-        createdAt: new Date()
-      });
-
-      // เคลียร์ตะกร้าหลังสั่งซื้อ
-      localStorage.removeItem("cart");
-
-      // นำทางไปยังหน้ารายการคำสั่งซื้อ
-      window.location.href = "Order list.html";
-    } catch (error) {
-      console.error("เกิดข้อผิดพลาด:", error);
-      alert("❌ กรุณาลองใหม่");
-    }
-  });
-}
-
-
-// ฟังก์ชันเข้าสู่ระบบ
-const loginBtn = document.getElementById("loginBtn");
-
-if (loginBtn) {
-  loginBtn.addEventListener("click", () => {
-    const email = prompt("กรุณากรอกอีเมล:");
-    const password = prompt("กรุณากรอกรหัสผ่าน:");
     
-    signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        const user = userCredential.user;
-        alert("เข้าสู่ระบบสำเร็จ");
-      })
-      .catch((error) => {
-        console.error(error);
-        alert("เข้าสู่ระบบไม่สำเร็จ");
-      });
+    try {
+  await addDoc(collection(db, "orders"), {
+    name,
+    address,
+    phone,
+    email: currentUser.email,
+    note,
+    paymentMethod: selectedPaymentMethod === "cod" ? "เก็บเงินปลายทาง" : "มารับเอง",
+    products: cart.map(item => ({
+      name: item.name,
+      price: item.price,
+      quantity: item.quantity,
+      image: item.image
+    })),
+    totalPrice: finalTotal, // ใช้ราคารวมค่าจัดส่ง
+    status: "รอยืนยัน",
+    userId: currentUser.uid,
+    createdAt: new Date()
+  });
+
+  localStorage.removeItem("cart");
+  window.location.href = "Order list.html";
+} catch (error) {
+  console.error("เกิดข้อผิดพลาด:", error);
+  alert("❌ กรุณาลองใหม่");
+}
   });
 }
